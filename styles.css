@@ -77,3 +77,17 @@ body {
     padding: 8px;
     text-align: center;
   }
+
+  td {
+    padding: 8px;
+    text-align: center;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+
+  tr:hover {
+    background-color: #e0e0e0;
+  }
+  
