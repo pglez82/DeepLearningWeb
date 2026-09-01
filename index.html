@@ -5,393 +5,691 @@
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 -->
 <html>
-	<head>
-		<title>Aprendizaje Profundo (Deep Learning)</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=.7, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
-	</head>
-	<body class="is-preload">
 
-		<!-- Sidebar -->
-			<section id="sidebar">
-				<div class="inner">
-					<nav>
+<head>
+	<title>Aprendizaje Profundo (Deep Learning)</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=.7, user-scalable=no" />
+	<link rel="stylesheet" href="assets/css/main.css" />
+	<noscript>
+		<link rel="stylesheet" href="assets/css/noscript.css" />
+	</noscript>
+	<script>
+		async function downloadNotebook(url, filename) {
+			try {
+				const response = await fetch(url);
+				const blob = await response.blob();
+				const link = document.createElement('a');
+				link.href = window.URL.createObjectURL(blob);
+				link.download = filename;
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+			} catch (err) {
+				window.open(url, '_blank');
+			}
+		}
+
+		// Close dropdown when clicking outside
+		document.addEventListener('click', function (event) {
+			const dropdown = document.querySelector('.notebook-dropdown');
+			if (dropdown && !dropdown.contains(event.target)) {
+				dropdown.removeAttribute('open');
+			}
+		});
+	</script>
+</head>
+
+<body class="is-preload">
+
+	<!-- Sidebar -->
+	<section id="sidebar">
+		<div class="inner">
+			<nav>
+				<ul>
+					<li><a href="#intro">Bienvenido</a></li>
+					<li><a href="#one">Teoría</a></li>
+					<li><a href="#two">Prácticas</a></li>
+				</ul>
+			</nav>
+		</div>
+	</section>
+
+	<!-- Wrapper -->
+	<div id="wrapper">
+
+		<!-- Intro -->
+		<section id="intro" class="wrapper style1 fullscreen fade-up">
+			<div class="inner">
+				<h1>Aprendizaje Profundo</h1>
+				<p>Esta es la página web con los contenidos de la asignatura Aprendizaje Profundo (Deep Learning) del
+					Grado en Ciencia e Ingeniería de Datos de la Universidad de Oviedo.</p>
+				<ul class="actions">
+					<li><a href="#one" class="button scrolly">Contenidos</a></li>
+				</ul>
+			</div>
+		</section>
+
+		<!-- One -->
+		<section id="one" class="wrapper style2 spotlights">
+			<section>
+				<a href="#" class="image"><img src="images/pic01.jpg" alt="" data-position="center center" /></a>
+				<div class="content">
+					<div class="inner">
+						<h2>Tema 1: Introducción al aprendizaje profundo</h2>
+						<a class="button" href="slides/tema1.pdf" target="_blank">Descargar PDF</a>
+						<h3>Links vídeos (1h 30min)</h3>
 						<ul>
-							<li><a href="#intro">Bienvenido</a></li>
-							<li><a href="#one">Teoría</a></li>
-							<li><a href="#two">Prácticas</a></li>
+							<li>Aprendizaje profundo en los medios <a href="https://youtu.be/k3oYWScRThw"
+									target="_blank">[Video]</a></li>
+							<li>Principales aplicaciones <a href="https://youtu.be/CUFKFndozlE"
+									target="_blank">[Video]</a></li>
+							<li>¿Qué es el aprendizaje profundo? <a href="https://youtu.be/mJRg7sGoGm8"
+									target="_blank">[Video]</a></li>
+							<li>Historia del aprendizaje profundo <a href="https://youtu.be/Q5tDVi-3HFI"
+									target="_blank">[Video]</a></li>
+							<li>Software y Hardware para el aprendizaje profundo <a href="https://youtu.be/MiCRoumoWWA"
+									target="_blank">[Video]</a></li>
+							<li>Tipos de aprendizaje profundo <a href="https://youtu.be/jxB_yEYRRTU"
+									target="_blank">[Video]</a></li>
+							<li>Problemas sociales y retos del aprendizaje profundo <a
+									href="https://youtu.be/jnL1HFI2qfQ" target="_blank">[Video]</a></li>
 						</ul>
-					</nav>
+
+					</div>
 				</div>
 			</section>
-
-		<!-- Wrapper -->
-			<div id="wrapper">
-
-				<!-- Intro -->
-					<section id="intro" class="wrapper style1 fullscreen fade-up">
-						<div class="inner">
-							<h1>Aprendizaje Profundo</h1>
-							<p>Esta es la página web con los contenidos de la asignatura Aprendizaje Profundo (Deep Learning) del Grado en Ciencia e Ingeniería de Datos de la Universidad de Oviedo.</p>
-							<ul class="actions">
-								<li><a href="#one" class="button scrolly">Contenidos</a></li>
+			<section>
+				<a href="#" class="image"><img src="images/pic02.jpg" alt="" data-position="top center" /></a>
+				<div class="content">
+					<div class="inner">
+						<h2>Tema 2: Fundamentos de las redes neuronales profundas</h2>
+						<a class="button" href="slides/tema2.pdf" target="_blank">Descargar PDF</a>
+						<a class="button" href="theorycode/tema2.zip" target="_blank">Descargar ejemplos</a>
+						<div>
+							<h3>Links Videos (3h 8min)</h3>
+							<ul class="video-links">
+								<li>El Perceptrón <a href="https://youtu.be/LIwsTI18Jnc" target="_blank">[Vídeo 1]</a>
+									<a href="https://youtu.be/VQ4A9OpTACs" target="_blank">[Vídeo 2]</a></li>
+								<li>Redes totalmente conectadas <a href="https://youtu.be/K1KU0YJ1A9A"
+										target="_blank">[Video]</a></li>
+								<li>Entrenamiento de una red: Función de pérdida <a href="https://youtu.be/y6SXI0bqWHw"
+										target="_blank">[Video]</a></li>
+								<li>Entrenamiento de una red: Descenso de gradiente <a
+										href="https://youtu.be/NQ4JKItd8xk" target="_blank">[Video]</a></li>
+								<li>Entrenamiento de una red: Backpropagation <a href="https://youtu.be/oHAyjzgQlNY"
+										target="_blank">[Video]</a></li>
+								<li>Tipos de descenso de gradiente <a href="https://youtu.be/idHfAE6CBfk"
+										target="_blank">[Video]</a></li>
+								<li>Desvanecimiento del gradiente y soluciones <a href="https://youtu.be/qeqyAwRFfBA"
+										target="_blank">[Video 1]</a> <a href="https://youtu.be/iWfdHrjO3pg"
+										target="_blank">[Video 2]</a></li>
+								<li>Diferenciación automática y grafos computacionales <a
+										href="https://youtu.be/KZQokkwYY1g" target="_blank">[Video]</a></li>
+								<li>Redes DAG <a href="https://youtu.be/CXWD-js9Pys" target="_blank">[Video]</a></li>
 							</ul>
+
+
 						</div>
-					</section>
+					</div>
+			</section>
+			<section>
+				<a href="#" class="image"><img src="images/pic04.jpg" alt="" data-position="25% 25%" /></a>
+				<div class="content">
+					<div class="inner">
+						<h2>Tema 3: Entrenamiento de redes neuronales profundas</h2>
+						<a class="button" href="slides/tema3.pdf" target="_blank">Descargar PDF</a>
+						<a class="button" href="theorycode/tema3.zip" target="_blank">Descargar ejemplos</a>
+						<div>
+							<h3>Links Videos (3h 19min)</h3>
+							<ul class="video-links">
+								<li>Proceso básico de entrenamiento de una red <a href="https://youtu.be/to8zc8RHG_s"
+										target="_blank">[Video]</a></li>
+								<li>Funciones de pérdida <a href="https://youtu.be/pDE3o5FzI-s"
+										target="_blank">[Video1]</a> <a href="https://youtu.be/jR8ILLf5U-8"
+										target="_blank">[Video 2]</a></li>
+								<li>Algoritmos de optimización<a href="https://youtu.be/YAAPFkbu6Ew"
+										target="_blank">[Video 1]</a> <a href="https://youtu.be/j_e0gJJiYu4"
+										target="_blank">[Video 2]</a> <a href="https://youtu.be/0_YRGWVpfcY"
+										target="_blank">[Video 3]</a></li>
+								<li>Compromiso entre sesgo y varianza <a href="https://youtu.be/81lKsBM43Uo"
+										target="_blank">[Video]</a></li>
+								<li>Regularización L1 y L2 <a href="https://youtu.be/NSpC45EcMVs"
+										target="_blank">[Video]</a></li>
+								<li>Dropout <a href="https://youtu.be/U6fRUgW1iP4" target="_blank">[Video]</a></li>
+								<li>Parada temprana <a href="https://youtu.be/kTK5eq6jmLc" target="_blank">[Video]</a>
+								</li>
+								<li>Aumento de datos <a href="https://youtu.be/9VLHtfN8dOI" target="_blank">[Video]</a>
+								</li>
+								<li>Batch Normalization <a href="https://youtu.be/ZToyCjoHqkA"
+										target="_blank">[Video]</a></li>
+								<li>Inicialización de pesos <a href="https://youtu.be/sCwl7EFkroM"
+										target="_blank">[Video]</a></li>
+							</ul>
 
-				<!-- One -->
-					<section id="one" class="wrapper style2 spotlights">
-						<section>
-							<a href="#" class="image"><img src="images/pic01.jpg" alt="" data-position="center center" /></a>
-							<div class="content">
-								<div class="inner">
-									<h2>Tema 1: Introducción al aprendizaje profundo</h2>
-									<a class="button" href="slides/tema1.pdf" target="_blank">Descargar PDF</a>
-									<h3>Links vídeos (1h 30min)</h3>
-									<ul>
-										<li>Aprendizaje profundo en los medios <a href="https://youtu.be/k3oYWScRThw" target="_blank">[Video]</a></li>
-										<li>Principales aplicaciones <a href="https://youtu.be/CUFKFndozlE" target="_blank">[Video]</a></li>
-										<li>¿Qué es el aprendizaje profundo? <a href="https://youtu.be/mJRg7sGoGm8" target="_blank">[Video]</a></li>
-										<li>Historia del aprendizaje profundo <a href="https://youtu.be/Q5tDVi-3HFI" target="_blank">[Video]</a></li>
-										<li>Software y Hardware para el aprendizaje profundo <a href="https://youtu.be/MiCRoumoWWA" target="_blank">[Video]</a></li>
-										<li>Tipos de aprendizaje profundo <a href="https://youtu.be/jxB_yEYRRTU" target="_blank">[Video]</a></li>
-										<li>Problemas sociales y retos del aprendizaje profundo <a href="https://youtu.be/jnL1HFI2qfQ" target="_blank">[Video]</a></li>
-									  </ul> 
-									
-								</div>
-							</div>
-						</section>
-						<section>
-							<a href="#" class="image"><img src="images/pic02.jpg" alt="" data-position="top center" /></a>
-							<div class="content">
-								<div class="inner">
-									<h2>Tema 2: Fundamentos de las redes neuronales profundas</h2>
-									<a class="button" href="slides/tema2.pdf" target="_blank">Descargar PDF</a> 
-									<a class="button" href="theorycode/tema2.zip" target="_blank">Descargar ejemplos</a>
-									<div>
-										<h3>Links Videos (3h 8min)</h3>
-										<ul class="video-links">
-											<li>El Perceptrón <a href="https://youtu.be/LIwsTI18Jnc" target="_blank">[Vídeo 1]</a> <a href="https://youtu.be/VQ4A9OpTACs" target="_blank">[Vídeo 2]</a></li>
-											<li>Redes totalmente conectadas <a href="https://youtu.be/K1KU0YJ1A9A" target="_blank">[Video]</a></li>
-											<li>Entrenamiento de una red: Función de pérdida <a href="https://youtu.be/y6SXI0bqWHw" target="_blank">[Video]</a></li>
-											<li>Entrenamiento de una red: Descenso de gradiente <a href="https://youtu.be/NQ4JKItd8xk" target="_blank">[Video]</a></li>
-											<li>Entrenamiento de una red: Backpropagation <a href="https://youtu.be/oHAyjzgQlNY" target="_blank">[Video]</a></li>
-											<li>Tipos de descenso de gradiente <a href="https://youtu.be/idHfAE6CBfk" target="_blank">[Video]</a></li>
-											<li>Desvanecimiento del gradiente y soluciones <a href="https://youtu.be/qeqyAwRFfBA" target="_blank">[Video 1]</a> <a href="https://youtu.be/iWfdHrjO3pg" target="_blank">[Video 2]</a></li>
-											<li>Diferenciación automática y grafos computacionales <a href="https://youtu.be/KZQokkwYY1g" target="_blank">[Video]</a></li>
-											<li>Redes DAG <a href="https://youtu.be/CXWD-js9Pys" target="_blank">[Video]</a></li>
-										</ul>  
-									
-									
-								</div>
-							</div>
-						</section>
-						<section>
-							<a href="#" class="image"><img src="images/pic04.jpg" alt="" data-position="25% 25%" /></a>
-							<div class="content">
-								<div class="inner">
-									<h2>Tema 3: Entrenamiento de redes neuronales profundas</h2>
-									<a class="button" href="slides/tema3.pdf" target="_blank">Descargar PDF</a> 
-									<a class="button" href="theorycode/tema3.zip" target="_blank">Descargar ejemplos</a>
-									<div>
-										<h3>Links Videos (3h 19min)</h3>
-										<ul class="video-links">
-											<li>Proceso básico de entrenamiento de una red <a href="https://youtu.be/to8zc8RHG_s" target="_blank">[Video]</a></li>
-											<li>Funciones de pérdida <a href="https://youtu.be/pDE3o5FzI-s" target="_blank">[Video1]</a> <a href="https://youtu.be/jR8ILLf5U-8" target="_blank">[Video 2]</a></li>
-											<li>Algoritmos de optimización<a href="https://youtu.be/YAAPFkbu6Ew" target="_blank">[Video 1]</a> <a href="https://youtu.be/j_e0gJJiYu4" target="_blank">[Video 2]</a> <a href="https://youtu.be/0_YRGWVpfcY" target="_blank">[Video 3]</a></li>
-											<li>Compromiso entre sesgo y varianza <a href="https://youtu.be/81lKsBM43Uo" target="_blank">[Video]</a></li>
-											<li>Regularización L1 y L2 <a href="https://youtu.be/NSpC45EcMVs" target="_blank">[Video]</a></li>
-											<li>Dropout <a href="https://youtu.be/U6fRUgW1iP4" target="_blank">[Video]</a></li>
-											<li>Parada temprana <a href="https://youtu.be/kTK5eq6jmLc" target="_blank">[Video]</a></li>
-											<li>Aumento de datos <a href="https://youtu.be/9VLHtfN8dOI" target="_blank">[Video]</a></li>
-											<li>Batch Normalization <a href="https://youtu.be/ZToyCjoHqkA" target="_blank">[Video]</a></li>
-											<li>Inicialización de pesos <a href="https://youtu.be/sCwl7EFkroM" target="_blank">[Video]</a></li>
-										</ul>
-																	
-									</div>
-							</div>
-						</section>
-						<section>
-							<a href="#" class="image"><img src="images/pic03.jpg" alt="" data-position="25% 25%" /></a>
-							<div class="content">
-								<div class="inner">
-									<h2>Tema 4: Arquitecturas y aplicaciones de las redes neuronales profundas</h2>
-									<!-- <h3>Links Videos (8h 40 min)</h3> -->
-									<div id="content" style="margin-left: 15px; margin-top: 25px;">
-										<table class="tg" style="margin-top: 20px;">
-											<tbody>
-												<tr>
-													<td class="tg-0lax">Introducción</td>
-													<td class="tg-0lax align-center" style="width: 20%;"><a href="https://youtu.be/6jQjPDpHBNc" target="_blank">Video</a></td>
-													<td class="tg-0lax" style="width: 23%;" ></td>
-
-												</tr>
-											</tbody>
-										</table>
-
-										<p><strong>Tema 4.1:</strong> Tratamiento de secuencias</p>
-										<table class="tg" style="margin-left: 15px;">
-											<tbody>
-												<tr>
-													<td class="tg-0lax">Redes recurrentes (RNN)</td>
-													<td class="tg-0lax align-center" style="width: 20%;"><a href="https://youtu.be/uikvLdfUQ2s" target="_blank">Video 1</a> <br> <a href="https://youtu.be/kNz1TGqiMfk" target="_blank">Video 2</a></td>
-													<td class="tg-0lax" rowspan="4" style="width: 20%;"> <a class="button" href="slides/tema4.pdf" target="_blank">PDF</a></td>
-												</tr>
-												<tr>
-													<td class="tg-0lax">Gate Recurrent Unit (GRU)</td>
-													<td class="tg-0lax align-center"><a href="https://youtu.be/kdS_ENbM2rs" target="_blank">Video</a></td>
-												</tr>
-												<tr>
-													<td class="tg-0lax">Long Short Term Memory (LSTM)</td>
-													<td class="tg-0lax align-center"><a href="https://youtu.be/_KUP7j2v8ac" target="_blank">Video</a></td>
-												</tr>
-												<tr>
-													<td class="tg-0lax">Redes Recurrentes Bidireccionales</td>
-													<td class="tg-0lax align-center"><a href="https://youtu.be/E4IHnNJ_Mtw" target="_blank">Video</a></td>
-												</tr>
-											</tbody>
-										</table>
-
-										<p><strong>Tema 4.2:</strong> Tratamiento de secuencias avanzado</p>
-										<table class="tg" style="margin-left: 15px;">
-											<tbody>
-												<tr>
-													<td class="tg-0lax">Mecanismos de atención</td>
-													<td class="tg-0lax align-center" style="width: 20%;"><a href="https://youtu.be/G2qed-u01TY" target="_blank">Video 1</a><br><a href="https://youtu.be/vq98_yuZxdQ" target="_blank">Video 2</a></td>
-													<td class="tg-0lax" rowspan="2" style="width: 20%;"> <a class="button" href="slides/tema4.2.pdf" target="_blank">PDF</a></td>
-												</tr>
-												<tr>
-													<td class="tg-0lax">Transformers</td>
-													<td class="tg-0lax align-center"><a href="https://youtu.be/GfG_H7xDjpA" target="_blank">Video</a></td>
-												</tr>
-											</tbody>
-										</table>
-
-										<p><strong>Tema 4.3:</strong> Visión por computador</p>
-										<table class="tg" style="margin-left: 15px;">
-											<tbody>
-												<tr>
-													<td class="tg-0lax">Redes convolucionales</td>
-													<td class="tg-0lax align-center" style="width: 20%;"><a href="https://youtu.be/x5SxrLVYUl8" target="_blank">Video 1</a><br><a href="https://youtu.be/wWfG9k1Jgds" target="_blank">Video 2</a><br><a href="https://youtu.be/wgl5cRBdx6U" target="_blank">Video 3</a><br><a href="https://youtu.be/XZb3uFGypA0" target="_blank">Video 4</a></td>
-													<td class="tg-0lax" style="width: 20%;"> <a class="button" href="slides/tema4.3.pdf" target="_blank">PDF</a></td>
-												</tr>
-											</tbody>
-										</table>
-
-										<p><strong>Tema 4.4:</strong> Aprendizaje no supervisado</p>
-										<table class="tg" style="margin-left: 15px;">
-											<tbody>
-												<tr>
-													<td class="tg-0lax">Autoencoders</td>
-													<td class="tg-0lax align-center" style="width: 20%;"><a href="https://youtu.be/x2iZFLVcCyA" target="_blank">Video</a></td>
-													<td class="tg-0lax" rowspan="2" style="width: 20%;"> <a class="button" href="slides/tema4.4.pdf" target="_blank">PDF</a></td>
-												</tr>
-												<tr>
-													<td class="tg-0lax">Variational autoencoders</td>
-													<td class="tg-0lax align-center"><a href="https://youtu.be/uGlLDQPhaHQ" target="_blank">Video</a></td>
-												</tr>
-											</tbody>
-										</table>
-
-										<p><strong>Tema 4.5:</strong> Generación de contenido</p>
-										<table class="tg" style="margin-left: 15px;">
-											<tbody>
-												<tr>
-													<td class="tg-0lax">Redes generativas adversarias</td>
-													<td class="tg-0lax align-center" style="width: 20%;"><a href="https://youtu.be/kRY3_4IjLGg" target="_blank">Video</a></td>
-													<td class="tg-0lax" style="width: 20%;"> <a class="button" href="slides/tema4.5.pdf" target="_blank">PDF</a></td>
-												</tr>
-											</tbody>
-										</table>
-
-										<p><strong>Tema 4.6:</strong> Temas avanzados</p>
-										<table class="tg" style="margin-left: 15px;">
-											<tbody>
-												<tr>
-													<td class="tg-0lax">Sistemas de recomendación</td>
-													<td class="tg-0lax align-center" style="width: 20%;"><a href="https://youtu.be/NgXjmi-opZA" target="_blank">Video</a></td>
-													<td class="tg-0lax" rowspan="2" style="width: 20%;"> <a class="button" href="slides/tema4.6.pdf" target="_blank">PDF</a></td>
-												</tr>
-												<tr>
-													<td class="tg-0lax">Cuantificación</td>
-													<td class="tg-0lax align-center"><a href="https://youtu.be/16cWiJhNQ0Q" target="_blank">Video</a></td>
-												</tr>
-											</tbody>
-										</table>
-
-									</div>
-									
-								</div>
-							</div>
-						</section>
-					</section>
-
-				<!-- Two -->
-					<section id="two" class="wrapper style3 fade-up">
-						<div class="inner">
-							<h2>Prácticas</h2>
-							<div class="features">
-								<section>
-									<span class="icon solid major fa-code"></span>
-									<h3>Entorno de trabajo</h3>
-									<p>Preparación del entorno: pip, conda, Google colab</p>
-									<a class="button" href="labs/slides/environment_preparation.pdf" target="_blank">Descargar PDF</a>
-									<a class="button" href="https://youtu.be/PcIwegwPseE" " target="_blank">Ir a vídeo</a>
-								</section>
-								<section>
-									<span class="icon solid major fa-code"></span>
-									<h3>Introducción a PyTorch (Parte 1)</h3>
-									<p>Primer contacto con PyTorch. Manejo de tensores</p>
-									<a class="button" href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/Introducci%C3%B3n%20a%20PyTorch%20(Parte%201).ipynb" target="_blank">Abrir notebook</a>
-									<a class="button" href="https://youtu.be/zdEgmcsoy4k" " target="_blank">Ir a vídeo</a>
-								</section>
-								<section>
-									<span class="icon solid major fa-code"></span>
-									<h3>Introducción a PyTorch (Parte 2)</h3>
-									<p>Uso de los tensores para el cálculo de gradientes</p>
-									<a class="button" href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/Introducci%C3%B3n%20a%20PyTorch%20(Parte%202).ipynb" target="_blank">Abrir notebook</a>
-									<a class="button" href="https://www.youtube.com/watch?v=eIf1cXkjxIw" " target="_blank">Ir a vídeo</a>
-								</section>
-								<section>
-									<span class="icon solid major fa-code"></span>
-									<h3>Introducción a PyTorch (Parte 3)</h3>
-									<p>Entrenamiento de la primera red neuronal en PyTorch</p>
-									<a class="button" href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/Introducci%C3%B3n%20a%20PyTorch%20(Parte%203).ipynb" target="_blank">Abrir notebook</a>
-									<a class="button" href="https://youtu.be/85Kp6z9nMpI" " target="_blank">Ir a vídeo</a>
-								</section>
-								<section>
-									<span class="icon solid major fa-code"></span>
-									<h3>Introducción a PyTorch (Parte 4)</h3>
-									<p>Datasets y DataLoaders</p>
-									<a class="button" href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/Introducci%C3%B3n%20a%20PyTorch%20(Parte%204).ipynb" target="_blank">Abrir notebook</a>
-									<a class="button" href="https://youtu.be/Kux6V8G8mS8" " target="_blank">Ir a vídeo</a>
-								</section>
-								<section>
-									<span class="icon solid major fa-code"></span>
-									<h3>Introducción a PyTorch (Parte 5)</h3>
-									<p>Entrenamiento avanzado: early stopping, selección del mejor modelo</p>
-									<a class="button" href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/Introducci%C3%B3n%20a%20PyTorch%20(Parte%205).ipynb" target="_blank">Abrir notebook</a>
-									<a class="button" href="https://youtu.be/qpt2A-3ccB8" " target="_blank">Ir a vídeo</a>
-								</section>
-								<!-- <section>
-									<span class="icon solid major fa-code"></span>
-									<h3>Introducción a PyTorch (Parte 6)</h3>
-									<p>Otras capas en PyTorch (CNNs, Transformers, Batch-Normalization, etc.)</p>
-									<a class="button" href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/Introducci%C3%B3n%20a%20PyTorch%20(Parte%206).ipynb" target="_blank">Abrir notebook</a>
-									<a class="button" href="https://youtu.be/bCVKyE1hbYg" " target="_blank">Ir a vídeo</a>
-								</section>
-								<section>
-									<span class="icon solid major fa-code"></span>
-									<h3>Introducción a PyTorch (Parte 7)</h3>
-									<p>Fine-tuning de un modelo preentrenado</p>
-									<a class="button" href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/Introducci%C3%B3n%20a%20PyTorch%20(Parte%207).ipynb" target="_blank">Abrir notebook</a>
-									<a class="button" href="https://youtu.be/AsFWxylDVNs" " target="_blank">Ir a vídeo</a>
-								</section> -->
-								
-								<section>
-									<span class="icon solid major fa-code"></span>
-									<h3>Monitorización de experimentos (Wandb)</h3>
-									<p>Monitorización de experimentos usando Weights and Biases</p>
-									<a class="button" href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/Monitorizaci%C3%B3n%20de%20experimentos%20(Wandb).ipynb" target="_blank">Abrir notebook</a>
-									<a class="button" href="https://youtu.be/oWygrajAIf8" target="_blank">Ir a vídeo</a>
-								</section>
-								<section>
-									<span class="icon solid major fa-code"></span>
-									<h3>Optimización de hiperparámetros (Optuna)</h3>
-									<p>Optimización automática de hiperparámetros con Optuna</p>
-									<a class="button" href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/Optimizaci%C3%B3n%20de%20hiperpar%C3%A1metros%20(Optuna).ipynb" target="_blank">Abrir notebook</a>
-									<a class="button" href="https://youtu.be/V9AG0HYL4EY" target="_blank">Ir a vídeo</a>
-								</section>
-								
-								<section>
-									<span class="icon solid major fa-code"></span>
-									<h3>Redes recurrentes (RNN)</h3>
-									<!-- <p>Creación de una red LSTM simple para resolver un problema de predicción de texto</p> -->
-									<a class="button" href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/4.1-RNN%20%5BOnline%5D.ipynb" target="_blank">Notebook (online)</a>
-									<a class="button" href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/4.1-RNN%20%5BPL%5D.ipynb" target="_blank">Notebook (presencial)</a>
-								</section>
-								<section>
-									<span class="icon solid major fa-code"></span>
-									<h3>Mecanismos de atención</h3>
-									<!-- <p>Utilización de mecanismos de atención para resolver un problema de análisis de sentimientos</p> -->
-									<a class="button" href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/4.2-Attention%20%5BOnline%5D.ipynb" target="_blank">Notebook (online)</a>
-									<a class="button" href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/4.2-Attention%20%5BPL%5D.ipynb" target="_blank">Notebook (presencial)</a>
-								</section>
-								<section>
-									<span class="icon solid major fa-code"></span>
-									<h3>Transformers</h3>
-									<a class="button" href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/4.2-Transformers%20%5BOnline%5D.ipynb" target="_blank">Notebook (online)</a>
-								</section>
-								<section>
-									<span class="icon solid major fa-code"></span>
-									<h3>Redes convolucionales (CNN)</h3>
-									<a class="button" href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/4.3-Redes%20convolucionales%20%5BOnline%5D.ipynb" target="_blank">Notebook (online)</a>
-									<a class="button" href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/4.3-Redes%20convolucionales%20%5BPL%5D.ipynb" target="_blank">Notebook (presencial)</a>
-								</section>
-								<section>
-									<span class="icon solid major fa-code"></span>
-									<h3>Auto-encoders </h3>
-									<a class="button" href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/4.4-Autoencoders%20%5BOnline%5D.ipynb" target="_blank">Notebook (online)</a>
-									<a class="button" href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/4.4-Autoencoders%20%5BPL%5D.ipynb" target="_blank">Notebook (presencial)</a>
-								</section>
-								<section>
-									<span class="icon solid major fa-code"></span>
-									<h3>Redes generativas adversarias (GAN)</h3>
-									<a class="button" href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/4.5-Redes%20Generativas%20%5BOnline%5D.ipynb" target="_blank">Notebook (online)</a>
-									<a class="button" href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/4.5-Redes%20Generativas%20%5BPL%5D.ipynb" target="_blank">Notebook (presencial)</a>
-								</section>
-								<h2 style="width: 100%;
-									flex-basis: 100%;
-									margin-top: 40px;
-									border-top: 2px solid #ccc;
-									padding-top: 20px;">
-									📚 Material Complementario
-								</h2>
-								<section>
-									<span class="icon solid major fa-code"></span>
-									<h3>Trabajando en remoto (SSH)</h3>
-									<p>Trabajo en un servidor remoto con GPU</p>
-									<a class="button" href="labs/slides/lab_remote.pdf" target="_blank">Descargar PDF</a>
-									<a class="button" href="https://youtu.be/qtfw0O_raRk"  target="_blank">Ir a vídeo</a>
-								</section>
-								<section>
-									<span class="icon solid major fa-code"></span>
-									<h3>Uso básico de SLURM</h3>
-									<p>Uso básico de SLURM</p>
-									<a class="button" href="https://www.youtube.com/watch?v=nA-_Vovf8QE" target="_blank">Ir a vídeo</a>
-								</section>
-								<section>
-									<span class="icon solid major fa-code"></span>
-									<h3>Frameworks alto nivel (PyTorch Lightning)</h3>
-									<p>Utilización de frameworks de alto nivel con PyTorch Lightning</p>
-									<a class="button" href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/Frameworks%20alto%20nivel%20(PyTorch%20Lightning).ipynb" target="_blank">Abrir notebook</a>
-									<a class="button" href="https://youtu.be/8stk3creeW8" target="_blank">Ir a vídeo</a>
-								</section>
 						</div>
-					</section>
+					</div>
+			</section>
+			<section>
+				<a href="#" class="image"><img src="images/pic03.jpg" alt="" data-position="25% 25%" /></a>
+				<div class="content">
+					<div class="inner">
+						<h2>Tema 4: Arquitecturas y aplicaciones de las redes neuronales profundas</h2>
+						<!-- <h3>Links Videos (8h 40 min)</h3> -->
+						<div id="content" style="margin-left: 15px; margin-top: 25px;">
+							<table class="tg" style="margin-top: 20px;">
+								<tbody>
+									<tr>
+										<td class="tg-0lax">Introducción</td>
+										<td class="tg-0lax align-center" style="width: 20%;"><a
+												href="https://youtu.be/6jQjPDpHBNc" target="_blank">Video</a></td>
+										<td class="tg-0lax" style="width: 23%;"></td>
 
-			</div>
+									</tr>
+								</tbody>
+							</table>
 
-		<!-- Footer -->
-			<footer id="footer" class="wrapper style1-alt">
-				<div class="inner">
-					<ul class="menu">
-						<li>Pablo González (gonzalezgpablo at uniovi.es) y Pablo Pérez (pabloperez at uniovi.es), Universidad de Oviedo</li>
-						<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-					</ul>
+							<p><strong>Tema 4.1:</strong> Tratamiento de secuencias</p>
+							<table class="tg" style="margin-left: 15px;">
+								<tbody>
+									<tr>
+										<td class="tg-0lax">Redes recurrentes (RNN)</td>
+										<td class="tg-0lax align-center" style="width: 20%;"><a
+												href="https://youtu.be/uikvLdfUQ2s" target="_blank">Video 1</a> <br> <a
+												href="https://youtu.be/kNz1TGqiMfk" target="_blank">Video 2</a></td>
+										<td class="tg-0lax" rowspan="4" style="width: 20%;"> <a class="button"
+												href="slides/tema4.pdf" target="_blank">PDF</a></td>
+									</tr>
+									<tr>
+										<td class="tg-0lax">Gate Recurrent Unit (GRU)</td>
+										<td class="tg-0lax align-center"><a href="https://youtu.be/kdS_ENbM2rs"
+												target="_blank">Video</a></td>
+									</tr>
+									<tr>
+										<td class="tg-0lax">Long Short Term Memory (LSTM)</td>
+										<td class="tg-0lax align-center"><a href="https://youtu.be/_KUP7j2v8ac"
+												target="_blank">Video</a></td>
+									</tr>
+									<tr>
+										<td class="tg-0lax">Redes Recurrentes Bidireccionales</td>
+										<td class="tg-0lax align-center"><a href="https://youtu.be/E4IHnNJ_Mtw"
+												target="_blank">Video</a></td>
+									</tr>
+								</tbody>
+							</table>
+
+							<p><strong>Tema 4.2:</strong> Tratamiento de secuencias avanzado</p>
+							<table class="tg" style="margin-left: 15px;">
+								<tbody>
+									<tr>
+										<td class="tg-0lax">Mecanismos de atención</td>
+										<td class="tg-0lax align-center" style="width: 20%;"><a
+												href="https://youtu.be/G2qed-u01TY" target="_blank">Video 1</a><br><a
+												href="https://youtu.be/vq98_yuZxdQ" target="_blank">Video 2</a></td>
+										<td class="tg-0lax" rowspan="2" style="width: 20%;"> <a class="button"
+												href="slides/tema4.2.pdf" target="_blank">PDF</a></td>
+									</tr>
+									<tr>
+										<td class="tg-0lax">Transformers</td>
+										<td class="tg-0lax align-center"><a href="https://youtu.be/GfG_H7xDjpA"
+												target="_blank">Video</a></td>
+									</tr>
+								</tbody>
+							</table>
+
+							<p><strong>Tema 4.3:</strong> Visión por computador</p>
+							<table class="tg" style="margin-left: 15px;">
+								<tbody>
+									<tr>
+										<td class="tg-0lax">Redes convolucionales</td>
+										<td class="tg-0lax align-center" style="width: 20%;"><a
+												href="https://youtu.be/x5SxrLVYUl8" target="_blank">Video 1</a><br><a
+												href="https://youtu.be/wWfG9k1Jgds" target="_blank">Video 2</a><br><a
+												href="https://youtu.be/wgl5cRBdx6U" target="_blank">Video 3</a><br><a
+												href="https://youtu.be/XZb3uFGypA0" target="_blank">Video 4</a></td>
+										<td class="tg-0lax" style="width: 20%;"> <a class="button"
+												href="slides/tema4.3.pdf" target="_blank">PDF</a></td>
+									</tr>
+								</tbody>
+							</table>
+
+							<p><strong>Tema 4.4:</strong> Aprendizaje no supervisado</p>
+							<table class="tg" style="margin-left: 15px;">
+								<tbody>
+									<tr>
+										<td class="tg-0lax">Autoencoders</td>
+										<td class="tg-0lax align-center" style="width: 20%;"><a
+												href="https://youtu.be/x2iZFLVcCyA" target="_blank">Video</a></td>
+										<td class="tg-0lax" rowspan="2" style="width: 20%;"> <a class="button"
+												href="slides/tema4.4.pdf" target="_blank">PDF</a></td>
+									</tr>
+									<tr>
+										<td class="tg-0lax">Variational autoencoders</td>
+										<td class="tg-0lax align-center"><a href="https://youtu.be/uGlLDQPhaHQ"
+												target="_blank">Video</a></td>
+									</tr>
+								</tbody>
+							</table>
+
+							<p><strong>Tema 4.5:</strong> Generación de contenido</p>
+							<table class="tg" style="margin-left: 15px;">
+								<tbody>
+									<tr>
+										<td class="tg-0lax">Redes generativas adversarias</td>
+										<td class="tg-0lax align-center" style="width: 20%;"><a
+												href="https://youtu.be/kRY3_4IjLGg" target="_blank">Video</a></td>
+										<td class="tg-0lax" style="width: 20%;"> <a class="button"
+												href="slides/tema4.5.pdf" target="_blank">PDF</a></td>
+									</tr>
+								</tbody>
+							</table>
+
+							<p><strong>Tema 4.6:</strong> Temas avanzados</p>
+							<table class="tg" style="margin-left: 15px;">
+								<tbody>
+									<tr>
+										<td class="tg-0lax">Sistemas de recomendación</td>
+										<td class="tg-0lax align-center" style="width: 20%;"><a
+												href="https://youtu.be/NgXjmi-opZA" target="_blank">Video</a></td>
+										<td class="tg-0lax" rowspan="2" style="width: 20%;"> <a class="button"
+												href="slides/tema4.6.pdf" target="_blank">PDF</a></td>
+									</tr>
+									<tr>
+										<td class="tg-0lax">Cuantificación</td>
+										<td class="tg-0lax align-center"><a href="https://youtu.be/16cWiJhNQ0Q"
+												target="_blank">Video</a></td>
+									</tr>
+								</tbody>
+							</table>
+
+						</div>
+
+					</div>
 				</div>
-			</footer>
+			</section>
+		</section>
 
-		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/jquery.scrollex.min.js"></script>
-			<script src="assets/js/jquery.scrolly.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
+		<!-- Two -->
+		<section id="two" class="wrapper style3 fade-up">
+			<div class="inner">
+				<h2>Prácticas</h2>
+				<div class="features">
+                    <section>
+                        <span class="icon solid major fa-code"></span>
+                        <h3>Entorno de trabajo</h3>
+                        <p>Preparación del entorno: pip, conda, Google colab</p>
+                        <a class="button" href="labs/slides/environment_preparation.pdf" target="_blank">Descargar
+                            PDF</a>
+                        <a class="button" href="https://youtu.be/PcIwegwPseE" target="_blank">Ir a vídeo</a>
+                    </section>
+                    <section>
+                        <span class="icon solid major fa-code"></span>
+                        <h3>Introducción a PyTorch (Parte 1)</h3>
+                        <p>Primer contacto con PyTorch. Manejo de tensores</p>
 
-	</body>
+                        <details class="notebook-dropdown">
+                            <summary class="button">Notebook ▾</summary>
+                            <div class="dropdown-menu">
+                                <a class="button option-btn" href="#"
+                                    onclick="downloadNotebook('https://raw.githubusercontent.com/pglez82/DeepLearningWeb/master/labs/notebooks/Introducci%C3%B3n%20a%20PyTorch%20(Parte%201).ipynb', 'Introduccion_a_PyTorch_Parte_1.ipynb'); return false;">Descargar
+                                    Notebook</a>
+                                <a class="button option-btn"
+                                    href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/Introducci%C3%B3n%20a%20PyTorch%20(Parte%201).ipynb"
+                                    target="_blank">Abrir en Colab</a>
+                            </div>
+                        </details>
+
+                        <a class="button" href="https://youtu.be/zdEgmcsoy4k" target="_blank">Ir a vídeo</a>
+                    </section>
+                    <section>
+                        <span class="icon solid major fa-code"></span>
+                        <h3>Introducción a PyTorch (Parte 2)</h3>
+                        <p>Uso de los tensores para el cálculo de gradientes</p>
+                        
+                        <details class="notebook-dropdown">
+                            <summary class="button">Notebook ▾</summary>
+                            <div class="dropdown-menu">
+                                <a class="button option-btn" href="#"
+                                    onclick="downloadNotebook('https://raw.githubusercontent.com/pglez82/DeepLearningWeb/master/labs/notebooks/Introducci%C3%B3n%20a%20PyTorch%20(Parte%202).ipynb', 'Introduccion_a_PyTorch_Parte_2.ipynb'); return false;">Descargar
+                                    Notebook</a>
+                                <a class="button option-btn"
+                                    href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/Introducci%C3%B3n%20a%20PyTorch%20(Parte%202).ipynb"
+                                    target="_blank">Abrir en Colab</a>
+                            </div>
+                        </details>
+
+                        <a class="button" href="https://www.youtube.com/watch?v=eIf1cXkjxIw" target="_blank">Ir a
+                            vídeo</a>
+                    </section>
+                    <section>
+                        <span class="icon solid major fa-code"></span>
+                        <h3>Introducción a PyTorch (Parte 3)</h3>
+                        <p>Entrenamiento de la primera red neuronal en PyTorch</p>
+                        
+                        <details class="notebook-dropdown">
+                            <summary class="button">Notebook ▾</summary>
+                            <div class="dropdown-menu">
+                                <a class="button option-btn" href="#"
+                                    onclick="downloadNotebook('https://raw.githubusercontent.com/pglez82/DeepLearningWeb/master/labs/notebooks/Introducci%C3%B3n%20a%20PyTorch%20(Parte%203).ipynb', 'Introduccion_a_PyTorch_Parte_3.ipynb'); return false;">Descargar
+                                    Notebook</a>
+                                <a class="button option-btn"
+                                    href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/Introducci%C3%B3n%20a%20PyTorch%20(Parte%203).ipynb"
+                                    target="_blank">Abrir en Colab</a>
+                            </div>
+                        </details>
+
+                        <a class="button" href="https://youtu.be/85Kp6z9nMpI" target="_blank">Ir a vídeo</a>
+                    </section>
+                    <section>
+                        <span class="icon solid major fa-code"></span>
+                        <h3>Introducción a PyTorch (Parte 4)</h3>
+                        <p>Datasets y DataLoaders</p>
+                        
+                        <details class="notebook-dropdown">
+                            <summary class="button">Notebook ▾</summary>
+                            <div class="dropdown-menu">
+                                <a class="button option-btn" href="#"
+                                    onclick="downloadNotebook('https://raw.githubusercontent.com/pglez82/DeepLearningWeb/master/labs/notebooks/Introducci%C3%B3n%20a%20PyTorch%20(Parte%204).ipynb', 'Introduccion_a_PyTorch_Parte_4.ipynb'); return false;">Descargar
+                                    Notebook</a>
+                                <a class="button option-btn"
+                                    href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/Introducci%C3%B3n%20a%20PyTorch%20(Parte%204).ipynb"
+                                    target="_blank">Abrir en Colab</a>
+                            </div>
+                        </details>
+
+                        <a class="button" href="https://youtu.be/Kux6V8G8mS8" target="_blank">Ir a vídeo</a>
+                    </section>
+                    <section>
+                        <span class="icon solid major fa-code"></span>
+                        <h3>Introducción a PyTorch (Parte 5)</h3>
+                        <p>Entrenamiento avanzado: early stopping, selección del mejor modelo</p>
+                        
+                        <details class="notebook-dropdown">
+                            <summary class="button">Notebook ▾</summary>
+                            <div class="dropdown-menu">
+                                <a class="button option-btn" href="#"
+                                    onclick="downloadNotebook('https://raw.githubusercontent.com/pglez82/DeepLearningWeb/master/labs/notebooks/Introducci%C3%B3n%20a%20PyTorch%20(Parte%205).ipynb', 'Introduccion_a_PyTorch_Parte_5.ipynb'); return false;">Descargar
+                                    Notebook</a>
+                                <a class="button option-btn"
+                                    href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/Introducci%C3%B3n%20a%20PyTorch%20(Parte%205).ipynb"
+                                    target="_blank">Abrir en Colab</a>
+                            </div>
+                        </details>
+
+                        <a class="button" href="https://youtu.be/qpt2A-3ccB8" target="_blank">Ir a vídeo</a>
+                    </section>
+                    <section>
+                        <span class="icon solid major fa-code"></span>
+                        <h3>Monitorización de experimentos (Wandb)</h3>
+                        <p>Monitorización de experimentos usando Weights and Biases</p>
+                        
+                        <details class="notebook-dropdown">
+                            <summary class="button">Notebook ▾</summary>
+                            <div class="dropdown-menu">
+                                <a class="button option-btn" href="#"
+                                    onclick="downloadNotebook('https://raw.githubusercontent.com/pglez82/DeepLearningWeb/master/labs/notebooks/Monitorizaci%C3%B3n%20de%20experimentos%20(Wandb).ipynb', 'Monitorizacion_de_experimentos_Wandb.ipynb'); return false;">Descargar
+                                    Notebook</a>
+                                <a class="button option-btn"
+                                    href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/Monitorizaci%C3%B3n%20de%20experimentos%20(Wandb).ipynb"
+                                    target="_blank">Abrir en Colab</a>
+                            </div>
+                        </details>
+
+                        <a class="button" href="https://youtu.be/oWygrajAIf8" target="_blank">Ir a vídeo</a>
+                    </section>
+                    <section>
+                        <span class="icon solid major fa-code"></span>
+                        <h3>Optimización de hiperparámetros (Optuna)</h3>
+                        <p>Optimización automática de hiperparámetros con Optuna</p>
+                        
+                        <details class="notebook-dropdown">
+                            <summary class="button">Notebook ▾</summary>
+                            <div class="dropdown-menu">
+                                <a class="button option-btn" href="#"
+                                    onclick="downloadNotebook('https://raw.githubusercontent.com/pglez82/DeepLearningWeb/master/labs/notebooks/Optimizaci%C3%B3n%20de%20hiperpar%C3%A1metros%20(Optuna).ipynb', 'Optimizacion_de_hiperparametros_Optuna.ipynb'); return false;">Descargar
+                                    Notebook</a>
+                                <a class="button option-btn"
+                                    href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/Optimizaci%C3%B3n%20de%20hiperpar%C3%A1metros%20(Optuna).ipynb"
+                                    target="_blank">Abrir en Colab</a>
+                            </div>
+                        </details>
+
+                        <a class="button" href="https://youtu.be/V9AG0HYL4EY" target="_blank">Ir a vídeo</a>
+                    </section>
+                    <section>
+                        <span class="icon solid major fa-code"></span>
+                        <h3>Redes recurrentes (RNN)</h3>
+                        
+                        <details class="notebook-dropdown">
+                            <summary class="button">Notebook (online) ▾</summary>
+                            <div class="dropdown-menu">
+                                <a class="button option-btn" href="#"
+                                    onclick="downloadNotebook('https://raw.githubusercontent.com/pglez82/DeepLearningWeb/master/labs/notebooks/4.1-RNN%20%5BOnline%5D.ipynb', '4.1-RNN_Online.ipynb'); return false;">Descargar
+                                    Notebook</a>
+                                <a class="button option-btn"
+                                    href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/4.1-RNN%20%5BOnline%5D.ipynb"
+                                    target="_blank">Abrir en Colab</a>
+                            </div>
+                        </details>
+
+                        <details class="notebook-dropdown">
+                            <summary class="button">Notebook (presencial) ▾</summary>
+                            <div class="dropdown-menu">
+                                <a class="button option-btn" href="#"
+                                    onclick="downloadNotebook('https://raw.githubusercontent.com/pglez82/DeepLearningWeb/master/labs/notebooks/4.1-RNN%20%5BPL%5D.ipynb', '4.1-RNN_PL.ipynb'); return false;">Descargar
+                                    Notebook</a>
+                                <a class="button option-btn"
+                                    href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/4.1-RNN%20%5BPL%5D.ipynb"
+                                    target="_blank">Abrir en Colab</a>
+                            </div>
+                        </details>
+                    </section>
+                    <section>
+                        <span class="icon solid major fa-code"></span>
+                        <h3>Mecanismos de atención</h3>
+                        
+                        <details class="notebook-dropdown">
+                            <summary class="button">Notebook (online) ▾</summary>
+                            <div class="dropdown-menu">
+                                <a class="button option-btn" href="#"
+                                    onclick="downloadNotebook('https://raw.githubusercontent.com/pglez82/DeepLearningWeb/master/labs/notebooks/4.2-Attention%20%5BOnline%5D.ipynb', '4.2-Attention_Online.ipynb'); return false;">Descargar
+                                    Notebook</a>
+                                <a class="button option-btn"
+                                    href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/4.2-Attention%20%5BOnline%5D.ipynb"
+                                    target="_blank">Abrir en Colab</a>
+                            </div>
+                        </details>
+
+                        <details class="notebook-dropdown">
+                            <summary class="button">Notebook (presencial) ▾</summary>
+                            <div class="dropdown-menu">
+                                <a class="button option-btn" href="#"
+                                    onclick="downloadNotebook('https://raw.githubusercontent.com/pglez82/DeepLearningWeb/master/labs/notebooks/4.2-Attention%20%5BPL%5D.ipynb', '4.2-Attention_PL.ipynb'); return false;">Descargar
+                                    Notebook</a>
+                                <a class="button option-btn"
+                                    href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/4.2-Attention%20%5BPL%5D.ipynb"
+                                    target="_blank">Abrir en Colab</a>
+                            </div>
+                        </details>
+                    </section>
+                    <section>
+                        <span class="icon solid major fa-code"></span>
+                        <h3>Transformers</h3>
+                        
+                        <details class="notebook-dropdown">
+                            <summary class="button">Notebook (online) ▾</summary>
+                            <div class="dropdown-menu">
+                                <a class="button option-btn" href="#"
+                                    onclick="downloadNotebook('https://raw.githubusercontent.com/pglez82/DeepLearningWeb/master/labs/notebooks/4.2-Transformers%20%5BOnline%5D.ipynb', '4.2-Transformers_Online.ipynb'); return false;">Descargar
+                                    Notebook</a>
+                                <a class="button option-btn"
+                                    href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/4.2-Transformers%20%5BOnline%5D.ipynb"
+                                    target="_blank">Abrir en Colab</a>
+                            </div>
+                        </details>
+                    </section>
+                    <section>
+                        <span class="icon solid major fa-code"></span>
+                        <h3>Redes convolucionales (CNN)</h3>
+                        
+                        <details class="notebook-dropdown">
+                            <summary class="button">Notebook (online) ▾</summary>
+                            <div class="dropdown-menu">
+                                <a class="button option-btn" href="#"
+                                    onclick="downloadNotebook('https://raw.githubusercontent.com/pglez82/DeepLearningWeb/master/labs/notebooks/4.3-Redes%20convolucionales%20%5BOnline%5D.ipynb', '4.3-Redes_convolucionales_Online.ipynb'); return false;">Descargar
+                                    Notebook</a>
+                                <a class="button option-btn"
+                                    href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/4.3-Redes%20convolucionales%20%5BOnline%5D.ipynb"
+                                    target="_blank">Abrir en Colab</a>
+                            </div>
+                        </details>
+
+                        <details class="notebook-dropdown">
+                            <summary class="button">Notebook (presencial) ▾</summary>
+                            <div class="dropdown-menu">
+                                <a class="button option-btn" href="#"
+                                    onclick="downloadNotebook('https://raw.githubusercontent.com/pglez82/DeepLearningWeb/master/labs/notebooks/4.3-Redes%20convolucionales%20%5BPL%5D.ipynb', '4.3-Redes_convolucionales_PL.ipynb'); return false;">Descargar
+                                    Notebook</a>
+                                <a class="button option-btn"
+                                    href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/4.3-Redes%20convolucionales%20%5BPL%5D.ipynb"
+                                    target="_blank">Abrir en Colab</a>
+                            </div>
+                        </details>
+                    </section>
+                    <section>
+                        <span class="icon solid major fa-code"></span>
+                        <h3>Auto-encoders </h3>
+                        
+                        <details class="notebook-dropdown">
+                            <summary class="button">Notebook (online) ▾</summary>
+                            <div class="dropdown-menu">
+                                <a class="button option-btn" href="#"
+                                    onclick="downloadNotebook('https://raw.githubusercontent.com/pglez82/DeepLearningWeb/master/labs/notebooks/4.4-Autoencoders%20%5BOnline%5D.ipynb', '4.4-Autoencoders_Online.ipynb'); return false;">Descargar
+                                    Notebook</a>
+                                <a class="button option-btn"
+                                    href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/4.4-Autoencoders%20%5BOnline%5D.ipynb"
+                                    target="_blank">Abrir en Colab</a>
+                            </div>
+                        </details>
+
+                        <details class="notebook-dropdown">
+                            <summary class="button">Notebook (presencial) ▾</summary>
+                            <div class="dropdown-menu">
+                                <a class="button option-btn" href="#"
+                                    onclick="downloadNotebook('https://raw.githubusercontent.com/pglez82/DeepLearningWeb/master/labs/notebooks/4.4-Autoencoders%20%5BPL%5D.ipynb', '4.4-Autoencoders_PL.ipynb'); return false;">Descargar
+                                    Notebook</a>
+                                <a class="button option-btn"
+                                    href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/4.4-Autoencoders%20%5BPL%5D.ipynb"
+                                    target="_blank">Abrir en Colab</a>
+                            </div>
+                        </details>
+                    </section>
+                    <section>
+                        <span class="icon solid major fa-code"></span>
+                        <h3>Redes generativas adversarias (GAN)</h3>
+                        
+                        <details class="notebook-dropdown">
+                            <summary class="button">Notebook (online) ▾</summary>
+                            <div class="dropdown-menu">
+                                <a class="button option-btn" href="#"
+                                    onclick="downloadNotebook('https://raw.githubusercontent.com/pglez82/DeepLearningWeb/master/labs/notebooks/4.5-Redes%20Generativas%20%5BOnline%5D.ipynb', '4.5-Redes_Generativas_Online.ipynb'); return false;">Descargar
+                                    Notebook</a>
+                                <a class="button option-btn"
+                                    href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/4.5-Redes%20Generativas%20%5BOnline%5D.ipynb"
+                                    target="_blank">Abrir en Colab</a>
+                            </div>
+                        </details>
+
+                        <details class="notebook-dropdown">
+                            <summary class="button">Notebook (presencial) ▾</summary>
+                            <div class="dropdown-menu">
+                                <a class="button option-btn" href="#"
+                                    onclick="downloadNotebook('https://raw.githubusercontent.com/pglez82/DeepLearningWeb/master/labs/notebooks/4.5-Redes%20Generativas%20%5BPL%5D.ipynb', '4.5-Redes_Generativas_PL.ipynb'); return false;">Descargar
+                                    Notebook</a>
+                                <a class="button option-btn"
+                                    href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/4.5-Redes%20Generativas%20%5BPL%5D.ipynb"
+                                    target="_blank">Abrir en Colab</a>
+                            </div>
+                        </details>
+                    </section>
+                    <h2 style="width: 100%;
+                                    flex-basis: 100%;
+                                    margin-top: 40px;
+                                    border-top: 2px solid #ccc;
+                                    padding-top: 20px;">
+                        📚 Material Complementario
+                    </h2>
+                    <section>
+                        <span class="icon solid major fa-code"></span>
+                        <h3>Trabajando en remoto (SSH)</h3>
+                        <p>Trabajo en un servidor remoto con GPU</p>
+                        <a class="button" href="labs/slides/lab_remote.pdf" target="_blank">Descargar PDF</a>
+                        <a class="button" href="https://youtu.be/qtfw0O_raRk" target="_blank">Ir a vídeo</a>
+                    </section>
+                    <section>
+                        <span class="icon solid major fa-code"></span>
+                        <h3>Uso básico de SLURM</h3>
+                        <p>Uso básico de SLURM</p>
+                        <a class="button" href="https://www.youtube.com/watch?v=nA-_Vovf8QE" target="_blank">Ir a
+                            vídeo</a>
+                    </section>
+                    <section>
+                        <span class="icon solid major fa-code"></span>
+                        <h3>Frameworks alto nivel (PyTorch Lightning)</h3>
+                        <p>Utilización de frameworks de alto nivel con PyTorch Lightning</p>
+                        
+                        <details class="notebook-dropdown">
+                            <summary class="button">Notebook ▾</summary>
+                            <div class="dropdown-menu">
+                                <a class="button option-btn" href="#"
+                                    onclick="downloadNotebook('https://raw.githubusercontent.com/pglez82/DeepLearningWeb/master/labs/notebooks/Frameworks%20alto%20nivel%20(PyTorch%20Lightning).ipynb', 'Frameworks_alto_nivel_PyTorch_Lightning.ipynb'); return false;">Descargar
+                                    Notebook</a>
+                                <a class="button option-btn"
+                                    href="https://colab.research.google.com/github/pglez82/DeepLearningWeb/blob/master/labs/notebooks/Frameworks%20alto%20nivel%20(PyTorch%20Lightning).ipynb"
+                                    target="_blank">Abrir en Colab</a>
+                            </div>
+                        </details>
+
+                        <a class="button" href="https://youtu.be/8stk3creeW8" target="_blank">Ir a vídeo</a>
+                    </section>
+                </div>
+		</section>
+
+	</div>
+
+	<!-- Footer -->
+	<footer id="footer" class="wrapper style1-alt">
+		<div class="inner">
+			<ul class="menu">
+				<li>Pablo González (gonzalezgpablo at uniovi.es) y Pablo Pérez (pabloperez at uniovi.es), Universidad de
+					Oviedo</li>
+				<li>&copy; Untitled. All rights reserved.</li>
+				<li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+			</ul>
+		</div>
+	</footer>
+
+	<!-- Scripts -->
+	<script src="assets/js/jquery.min.js"></script>
+	<script src="assets/js/jquery.scrollex.min.js"></script>
+	<script src="assets/js/jquery.scrolly.min.js"></script>
+	<script src="assets/js/browser.min.js"></script>
+	<script src="assets/js/breakpoints.min.js"></script>
+	<script src="assets/js/util.js"></script>
+	<script src="assets/js/main.js"></script>
+
+	<script>
+        document.addEventListener('click', function (event) {
+            // Si se hace clic en un botón de opción dentro de un menú desplegable
+            if (event.target.classList.contains('option-btn')) {
+                const details = event.target.closest('details.notebook-dropdown');
+                if (details) {
+                    details.removeAttribute('open');
+                }
+            }
+        });
+    </script>
+
+</body>
+
 </html>
