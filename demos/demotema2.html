@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interpretación Matemática de una Red Neuronal - UniOvi</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Plotly.js CDN for robust responsive scientific plotting -->
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <!-- KaTeX for crisp LaTeX formulas -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" 
+          onload="renderMathInDocument()"></script>
+
+  <!-- Google Font: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0480ba', // Azul corporativo oficial de las diapositivas
+              600: '#0369a1',
+              700: '#075985',
+              800: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    .node-circle {
+      transition: transform 0.2s, fill 0.2s;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-sans">
+
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-brand-500 to-sky-600 flex items-center justify-center text-white shadow-md font-bold text-xl">
+          $\Sigma$
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg font-bold text-slate-900 leading-tight">Interpretación Matemática de una Red Neuronal</h1>
+            <span class="text-xs font-semibold px-2 py-0.5 bg-brand-50 text-brand-700 border border-brand-200 rounded-full">Tema 2</span>
+          </div>
+          <p class="text-xs text-slate-500">Grado en Ciencia e Ingeniería de Datos · Universidad de Oviedo</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-sm font-medium">
+        <button id="tabBtnGuided" onclick="switchMainTab('guided')" class="px-3.5 py-1.5 rounded-lg transition-all text-brand-700 bg-white shadow-sm font-semibold flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+          Modo Guiado (Paso a Paso)
+        </button>
+        <button id="tabBtnLab" onclick="switchMainTab('lab')" class="px-3.5 py-1.5 rounded-lg transition-all text-slate-600 hover:text-slate-900 flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+          Laboratorio Libre (Playground)
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full">
+
+    <div id="sectionGuided" class="space-y-6 block">
+      
+      <!-- Stepper Navigation Header -->
+      <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
+        <div class="flex items-center justify-between overflow-x-auto pb-2 md:pb-0 gap-2">
+          <button onclick="setGuidedStep(1)" id="stepTab1" class="step-tab flex-1 min-w-[130px] text-left p-3 rounded-xl border-2 border-brand-500 bg-brand-50 transition-all">
+            <span class="block text-xs font-bold uppercase tracking-wider text-brand-600">Paso 1</span>
+            <span class="block text-sm font-semibold text-slate-800">El Problema y Datos</span>
+          </button>
+          <button onclick="setGuidedStep(2)" id="stepTab2" class="step-tab flex-1 min-w-[130px] text-left p-3 rounded-xl border-2 border-transparent bg-slate-50 hover:bg-slate-100 transition-all">
+            <span class="block text-xs font-bold uppercase tracking-wider text-slate-400">Paso 2</span>
+            <span class="block text-sm font-semibold text-slate-800">Activación Softplus</span>
+          </button>
+          <button onclick="setGuidedStep(3)" id="stepTab3" class="step-tab flex-1 min-w-[130px] text-left p-3 rounded-xl border-2 border-transparent bg-slate-50 hover:bg-slate-100 transition-all">
+            <span class="block text-xs font-bold uppercase tracking-wider text-slate-400">Paso 3</span>
+            <span class="block text-sm font-semibold text-slate-800">Neurona Oculta $h_1$</span>
+          </button>
+          <button onclick="setGuidedStep(4)" id="stepTab4" class="step-tab flex-1 min-w-[130px] text-left p-3 rounded-xl border-2 border-transparent bg-slate-50 hover:bg-slate-100 transition-all">
+            <span class="block text-xs font-bold uppercase tracking-wider text-slate-400">Paso 4</span>
+            <span class="block text-sm font-semibold text-slate-800">Neurona Oculta $h_2$</span>
+          </button>
+          <button onclick="setGuidedStep(5)" id="stepTab5" class="step-tab flex-1 min-w-[130px] text-left p-3 rounded-xl border-2 border-transparent bg-slate-50 hover:bg-slate-100 transition-all">
+            <span class="block text-xs font-bold uppercase tracking-wider text-slate-400">Paso 5</span>
+            <span class="block text-sm font-semibold text-slate-800">Combinación y Salida</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step Content Area -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left: Explanatory Card -->
+        <div class="lg:col-span-5 flex flex-col space-y-4">
+          <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex-1 flex flex-col justify-between">
+            <div id="stepExplanatoryContent">
+              <!-- Content rendered dynamically via JS -->
+            </div>
+
+            <!-- Navigation Controls -->
+            <div class="pt-5 border-t border-slate-200 flex items-center justify-between mt-4">
+              <button id="btnPrevStep" onclick="navigateStep(-1)" class="px-4 py-2 rounded-xl text-sm font-medium border border-slate-300 text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed">
+                ← Anterior
+              </button>
+              <div class="text-xs text-slate-400 font-medium">Paso <span id="stepCounterText">1</span> de 5</div>
+              <button id="btnNextStep" onclick="navigateStep(1)" class="px-4 py-2 rounded-xl text-sm font-medium bg-brand-500 hover:bg-brand-600 text-white shadow-sm flex items-center gap-1">
+                Siguiente →
+              </button>
+            </div>
+          </div>
+
+          <!-- Dataset Reference Card -->
+          <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 text-xs">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-slate-700">Muestras clínicas (10 Pacientes)</span>
+              <span class="text-slate-400">Tabla de Dosis vs. Efecto</span>
+            </div>
+            <div class="grid grid-cols-5 sm:grid-cols-10 gap-1.5 text-center font-mono">
+              <div class="p-1 bg-slate-50 rounded border border-slate-200"><div class="text-[10px] text-slate-400">0.01</div><div class="font-bold text-slate-700">0</div></div>
+              <div class="p-1 bg-slate-50 rounded border border-slate-200"><div class="text-[10px] text-slate-400">0.10</div><div class="font-bold text-slate-700">0</div></div>
+              <div class="p-1 bg-slate-50 rounded border border-slate-200"><div class="text-[10px] text-slate-400">0.20</div><div class="font-bold text-slate-700">0</div></div>
+              <div class="p-1 bg-emerald-50 rounded border border-emerald-300"><div class="text-[10px] text-emerald-600">0.40</div><div class="font-bold text-emerald-700">1</div></div>
+              <div class="p-1 bg-emerald-50 rounded border border-emerald-300"><div class="text-[10px] text-emerald-600">0.45</div><div class="font-bold text-emerald-700">1</div></div>
+              <div class="p-1 bg-emerald-50 rounded border border-emerald-300"><div class="text-[10px] text-emerald-600">0.50</div><div class="font-bold text-emerald-700">1</div></div>
+              <div class="p-1 bg-emerald-50 rounded border border-emerald-300"><div class="text-[10px] text-emerald-600">0.60</div><div class="font-bold text-emerald-700">1</div></div>
+              <div class="p-1 bg-slate-50 rounded border border-slate-200"><div class="text-[10px] text-slate-400">0.80</div><div class="font-bold text-slate-700">0</div></div>
+              <div class="p-1 bg-slate-50 rounded border border-slate-200"><div class="text-[10px] text-slate-400">0.90</div><div class="font-bold text-slate-700">0</div></div>
+              <div class="p-1 bg-slate-50 rounded border border-slate-200"><div class="text-[10px] text-slate-400">1.00</div><div class="font-bold text-slate-700">0</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Graph for current pedagogical step -->
+        <div class="lg:col-span-7 space-y-4">
+          <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-2">
+              <h2 id="stepChartTitle" class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-brand-500"></span>
+                Visualización Didáctica
+              </h2>
+              <span id="stepChartSubtitle" class="text-xs text-slate-500 font-medium">Curva matemática</span>
+            </div>
+            
+            <div id="guidedPlot" class="w-full h-80 sm:h-96"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="sectionLab" class="space-y-6 hidden">
+      
+      <!-- Interactive Probe & Forward Inference Control Banner (Lab Exclusive) -->
+      <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-l-4 border-l-brand-500">
+        <div class="flex items-center space-x-3">
+          <div class="p-2.5 bg-brand-50 text-brand-600 rounded-xl">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+          </div>
+          <div>
+            <div class="text-xs uppercase tracking-wider font-bold text-brand-700">Inferencia Forward en Vivo</div>
+            <div class="text-sm font-semibold text-slate-800">Sonda de Entrada: Dosis del Paciente ($x$)</div>
+          </div>
+        </div>
+
+        <!-- Dose slider control -->
+        <div class="flex-1 max-w-lg mx-2">
+          <div class="flex justify-between items-center text-xs font-semibold mb-1">
+            <span class="text-slate-500">0.0 (Sin dosis)</span>
+            <span class="text-brand-700 font-mono text-xs sm:text-sm bg-brand-50 px-2.5 py-0.5 rounded-md border border-brand-200">
+              Dosis $x = <span id="probeValDisplay">0.500</span>$
+            </span>
+            <span class="text-slate-500">1.0 (Dosis máx)</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <input type="range" id="globalProbeSlider" min="0" max="1" step="0.005" value="0.5" 
+                   class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-brand-500"
+                   oninput="onProbeInput(this.value)">
+            <!-- Auto-scan / Play button -->
+            <button id="btnAutoScan" onclick="toggleAutoScan()" title="Escanear dosis de 0 a 1 automáticamente"
+                    class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors border border-slate-200 flex-shrink-0">
+              <svg id="playIcon" class="w-4 h-4 text-brand-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+              <span id="playText" class="hidden sm:inline">Barrido</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Live evaluation badges -->
+        <div class="flex items-center gap-3 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 text-xs">
+          <div class="text-center px-1">
+            <div class="text-slate-400 font-mono text-[10px]">h₁</div>
+            <div class="font-bold font-mono text-indigo-600" id="probeH1Val">0.00</div>
+          </div>
+          <div class="h-6 w-px bg-slate-200"></div>
+          <div class="text-center px-1">
+            <div class="text-slate-400 font-mono text-[10px]">h₂</div>
+            <div class="font-bold font-mono text-teal-600" id="probeH2Val">0.00</div>
+          </div>
+          <div class="h-6 w-px bg-slate-200"></div>
+          <div class="text-center px-1">
+            <div class="text-slate-400 font-mono text-[10px]">Predicción ŷ</div>
+            <div class="font-bold font-mono text-brand-600 text-sm" id="probeYVal">0.00</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left Column: Weights controller & Interactive SVG Network -->
+        <div class="lg:col-span-5 space-y-5">
+          
+          <!-- Interactive Network SVG Diagram -->
+          <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-sm font-bold text-slate-900">Grafo Computacional Dinámico</h3>
+              <button onclick="resetDefaultWeights()" class="text-xs text-brand-600 hover:text-brand-800 font-medium underline flex items-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                Restaurar Pesos
+              </button>
+            </div>
+            
+            <p class="text-xs text-slate-500 mb-4">
+              Mueve los pesos para observar la alteración inmediata de cada activación y la predicción final.
+            </p>
+
+            <!-- SVG Container -->
+            <div class="w-full bg-slate-900 rounded-xl p-3 shadow-inner overflow-hidden">
+              <svg id="networkSvg" viewBox="0 0 460 260" class="w-full h-auto select-none font-sans">
+                <!-- Defs for markers and gradients -->
+                <defs>
+                  <linearGradient id="gradNodeIn" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#38bdf8"/>
+                    <stop offset="100%" stop-color="#0284c7"/>
+                  </linearGradient>
+                  <linearGradient id="gradNodeH1" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#818cf8"/>
+                    <stop offset="100%" stop-color="#4f46e5"/>
+                  </linearGradient>
+                  <linearGradient id="gradNodeH2" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#2dd4bf"/>
+                    <stop offset="100%" stop-color="#0d9488"/>
+                  </linearGradient>
+                  <linearGradient id="gradNodeOut" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#f43f5e"/>
+                    <stop offset="100%" stop-color="#be123c"/>
+                  </linearGradient>
+                </defs>
+
+                <!-- Synapses (Lines) -->
+                <line id="syn_x_h1" x1="60" y1="130" x2="220" y2="70" stroke="#64748b" stroke-width="2.5" opacity="0.8"/>
+                <line id="syn_x_h2" x1="60" y1="130" x2="220" y2="190" stroke="#64748b" stroke-width="2.5" opacity="0.8"/>
+                <line id="syn_h1_y" x1="220" y1="70" x2="390" y2="130" stroke="#64748b" stroke-width="2.5" opacity="0.8"/>
+                <line id="syn_h2_y" x1="220" y1="190" x2="390" y2="130" stroke="#64748b" stroke-width="2.5" opacity="0.8"/>
+
+                <!-- Synapse Weights Labels -->
+                <g class="font-mono text-[10px] font-bold" fill="#cbd5e1">
+                  <!-- w11 label -->
+                  <rect x="105" y="76" width="60" height="18" rx="4" fill="#0f172a" fill-opacity="0.85" stroke="#334155" stroke-width="1"/>
+                  <text x="135" y="89" text-anchor="middle" id="svg_w11_txt">w₁₁=-13.8</text>
+
+                  <!-- w12 label -->
+                  <rect x="105" y="166" width="60" height="18" rx="4" fill="#0f172a" fill-opacity="0.85" stroke="#334155" stroke-width="1"/>
+                  <text x="135" y="179" text-anchor="middle" id="svg_w12_txt">w₁₂=-5.72</text>
+
+                  <!-- wOut1 label -->
+                  <rect x="275" y="80" width="65" height="18" rx="4" fill="#0f172a" fill-opacity="0.85" stroke="#334155" stroke-width="1"/>
+                  <text x="307" y="93" text-anchor="middle" id="svg_wo1_txt">wₒ₁=-1.91</text>
+
+                  <!-- wOut2 label -->
+                  <rect x="275" y="162" width="65" height="18" rx="4" fill="#0f172a" fill-opacity="0.85" stroke="#334155" stroke-width="1"/>
+                  <text x="307" y="175" text-anchor="middle" id="svg_wo2_txt">wₒ₂=+5.49</text>
+                </g>
+
+                <!-- Input Node: x -->
+                <g transform="translate(60, 130)">
+                  <circle r="26" fill="url(#gradNodeIn)" stroke="#38bdf8" stroke-width="2" class="node-circle shadow-lg"/>
+                  <text y="-3" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">Dosis x</text>
+                  <text y="14" text-anchor="middle" fill="#e0f2fe" font-size="10" font-family="JetBrains Mono" id="svg_in_val">0.50</text>
+                </g>
+
+                <!-- Hidden Node 1: h1 -->
+                <g transform="translate(220, 70)">
+                  <circle r="28" fill="url(#gradNodeH1)" stroke="#a5b4fc" stroke-width="2" class="node-circle"/>
+                  <text y="-6" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">h₁ (Softp)</text>
+                  <text y="9" text-anchor="middle" fill="#e0e7ff" font-size="10" font-family="JetBrains Mono" id="svg_h1_val">0.00</text>
+                  <rect x="-24" y="32" width="48" height="15" rx="3" fill="#1e1b4b" stroke="#4338ca"/>
+                  <text y="43" text-anchor="middle" fill="#c7d2fe" font-size="9" font-family="JetBrains Mono" id="svg_b1_txt">b₁=6.36</text>
+                </g>
+
+                <!-- Hidden Node 2: h2 -->
+                <g transform="translate(220, 190)">
+                  <circle r="28" fill="url(#gradNodeH2)" stroke="#5eead4" stroke-width="2" class="node-circle"/>
+                  <text y="-6" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">h₂ (Softp)</text>
+                  <text y="9" text-anchor="middle" fill="#ccfbf1" font-size="10" font-family="JetBrains Mono" id="svg_h2_val">0.00</text>
+                  <rect x="-24" y="32" width="48" height="15" rx="3" fill="#134e4a" stroke="#0f766e"/>
+                  <text y="43" text-anchor="middle" fill="#99f6e4" font-size="9" font-family="JetBrains Mono" id="svg_b2_txt">b₂=2.15</text>
+                </g>
+
+                <!-- Output Node: y -->
+                <g transform="translate(390, 130)">
+                  <circle r="28" fill="url(#gradNodeOut)" stroke="#fda4af" stroke-width="2" class="node-circle"/>
+                  <text y="-6" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">Salida ŷ</text>
+                  <text y="10" text-anchor="middle" fill="#ffe4e6" font-size="11" font-family="JetBrains Mono" font-weight="bold" id="svg_y_val">0.00</text>
+                  <rect x="-26" y="32" width="52" height="15" rx="3" fill="#881337" stroke="#be123c"/>
+                  <text y="43" text-anchor="middle" fill="#fecdd3" font-size="9" font-family="JetBrains Mono" id="svg_bout_txt">b_y=-0.25</text>
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Weights and Biases Parameter Sliders -->
+          <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
+            <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center justify-between">
+              <span>Ajuste de Pesos y Sesgos</span>
+              <span class="text-xs font-normal text-slate-500">Parámetros entrenables ($\theta$)</span>
+            </h3>
+
+            <div class="space-y-4 text-xs">
+              <!-- Hidden 1 Group -->
+              <div class="p-3 bg-indigo-50/60 rounded-xl border border-indigo-100">
+                <span class="font-bold text-indigo-900 block mb-2">Capa Oculta 1 ($h_1$): $z_1 = w_{11} \cdot x + b_1$</span>
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <div class="flex justify-between text-slate-600 mb-1">
+                      <span>Peso $w_{11}$:</span>
+                      <span id="lbl_w11" class="font-mono font-bold text-indigo-700">-13.80</span>
+                    </div>
+                    <input type="range" id="sl_w11" min="-25" max="10" step="0.1" value="-13.8" 
+                           class="w-full h-1.5 bg-indigo-200 rounded appearance-none cursor-pointer accent-indigo-600"
+                           oninput="updateParam('w11', this.value)">
+                  </div>
+                  <div>
+                    <div class="flex justify-between text-slate-600 mb-1">
+                      <span>Bias $b_1$:</span>
+                      <span id="lbl_b1" class="font-mono font-bold text-indigo-700">6.36</span>
+                    </div>
+                    <input type="range" id="sl_b1" min="-10" max="15" step="0.1" value="6.36" 
+                           class="w-full h-1.5 bg-indigo-200 rounded appearance-none cursor-pointer accent-indigo-600"
+                           oninput="updateParam('b1', this.value)">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Hidden 2 Group -->
+              <div class="p-3 bg-teal-50/60 rounded-xl border border-teal-100">
+                <span class="font-bold text-teal-900 block mb-2">Capa Oculta 2 ($h_2$): $z_2 = w_{12} \cdot x + b_2$</span>
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <div class="flex justify-between text-slate-600 mb-1">
+                      <span>Peso $w_{12}$:</span>
+                      <span id="lbl_w12" class="font-mono font-bold text-teal-700">-5.72</span>
+                    </div>
+                    <input type="range" id="sl_w12" min="-25" max="10" step="0.1" value="-5.72" 
+                           class="w-full h-1.5 bg-teal-200 rounded appearance-none cursor-pointer accent-teal-600"
+                           oninput="updateParam('w12', this.value)">
+                  </div>
+                  <div>
+                    <div class="flex justify-between text-slate-600 mb-1">
+                      <span>Bias $b_2$:</span>
+                      <span id="lbl_b2" class="font-mono font-bold text-teal-700">2.15</span>
+                    </div>
+                    <input type="range" id="sl_b2" min="-10" max="15" step="0.1" value="2.15" 
+                           class="w-full h-1.5 bg-teal-200 rounded appearance-none cursor-pointer accent-teal-600"
+                           oninput="updateParam('b2', this.value)">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Output Layer Group -->
+              <div class="p-3 bg-rose-50/60 rounded-xl border border-rose-100">
+                <span class="font-bold text-rose-900 block mb-2">Capa de Salida ($y$): $y = w_{o1} h_1 + w_{o2} h_2 + b_y$</span>
+                <div class="grid grid-cols-3 gap-2">
+                  <div>
+                    <div class="flex justify-between text-slate-600 mb-1">
+                      <span>$w_{o1}$:</span>
+                      <span id="lbl_wo1" class="font-mono font-bold text-rose-700">-1.91</span>
+                    </div>
+                    <input type="range" id="sl_wo1" min="-10" max="10" step="0.05" value="-1.91" 
+                           class="w-full h-1.5 bg-rose-200 rounded appearance-none cursor-pointer accent-rose-600"
+                           oninput="updateParam('wo1', this.value)">
+                  </div>
+                  <div>
+                    <div class="flex justify-between text-slate-600 mb-1">
+                      <span>$w_{o2}$:</span>
+                      <span id="lbl_wo2" class="font-mono font-bold text-rose-700">5.49</span>
+                    </div>
+                    <input type="range" id="sl_wo2" min="-10" max="10" step="0.05" value="5.49" 
+                           class="w-full h-1.5 bg-rose-200 rounded appearance-none cursor-pointer accent-rose-600"
+                           oninput="updateParam('wo2', this.value)">
+                  </div>
+                  <div>
+                    <div class="flex justify-between text-slate-600 mb-1">
+                      <span>Bias $b_y$:</span>
+                      <span id="lbl_by" class="font-mono font-bold text-rose-700">-0.25</span>
+                    </div>
+                    <input type="range" id="sl_by" min="-5" max="5" step="0.05" value="-0.25" 
+                           class="w-full h-1.5 bg-rose-200 rounded appearance-none cursor-pointer accent-rose-600"
+                           oninput="updateParam('by', this.value)">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Error Metric Indicator -->
+            <div class="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between text-xs">
+              <span class="text-slate-500">Error Cuadrático Medio ($MSE$ sobre los 10 pacientes):</span>
+              <span id="mseDisplay" class="font-mono font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded border border-slate-300">0.0042</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Interactive Decomposition Graphs -->
+        <div class="lg:col-span-7 space-y-4">
+          <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <h3 class="text-sm font-bold text-slate-800">Descomposición Funcional de la Red</h3>
+              
+              <!-- Curve Visibility Checkboxes -->
+              <div class="flex flex-wrap items-center gap-3 text-xs">
+                <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                  <input type="checkbox" id="chk_data" checked onchange="toggleLabCurve()" class="rounded text-amber-500 focus:ring-0">
+                  <span class="font-medium text-slate-700">Datos Reales</span>
+                </label>
+                <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                  <input type="checkbox" id="chk_pred" checked onchange="toggleLabCurve()" class="rounded text-brand-600 focus:ring-0">
+                  <span class="font-bold text-brand-600">Salida Final $y(x)$</span>
+                </label>
+                <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                  <input type="checkbox" id="chk_nobias" checked onchange="toggleLabCurve()" class="rounded text-purple-600 focus:ring-0">
+                  <span class="font-medium text-purple-600">Sin Bias ($w_{o1}h_1 + w_{o2}h_2$)</span>
+                </label>
+                <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                  <input type="checkbox" id="chk_h1" onchange="toggleLabCurve()" class="rounded text-indigo-600 focus:ring-0">
+                  <span class="font-medium text-indigo-600">$h_1(x)$</span>
+                </label>
+                <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                  <input type="checkbox" id="chk_h2" onchange="toggleLabCurve()" class="rounded text-teal-600 focus:ring-0">
+                  <span class="font-medium text-teal-600">$h_2(x)$</span>
+                </label>
+                <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                  <input type="checkbox" id="chk_wh1" onchange="toggleLabCurve()" class="rounded text-blue-400 focus:ring-0">
+                  <span class="font-medium text-blue-500">$w_{o1} \cdot h_1$</span>
+                </label>
+                <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                  <input type="checkbox" id="chk_wh2" onchange="toggleLabCurve()" class="rounded text-emerald-400 focus:ring-0">
+                  <span class="font-medium text-emerald-600">$w_{o2} \cdot h_2$</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Plotly Container for Playground -->
+            <div id="labPlot" class="w-full h-[480px]"></div>
+
+            <!-- Mathematical intuition summary -->
+            <div class="mt-4 p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 leading-relaxed flex items-start gap-2.5">
+              <svg class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <div>
+                <strong>Intuición clave para el alumno:</strong> Ninguna de las neuronas individuales ($h_1$ o $h_2$) tiene forma de campana; ambas son curvas monotónicamente decrecientes (rampas suaves). Es la <em>combinación lineal con signos opuestos</em> ($+5.49 h_2 - 1.91 h_1$) la que crea la protuberancia o activación acotada alrededor de la dosis óptima $[0.4, 0.6]$. El sesgo final $b_{out}=-0.25$ ajusta la curva al nivel base $0$.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="bg-white border-t border-slate-200 py-4 mt-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-2">
+      <div>
+        Material docente: <strong>Pablo González, Pablo Pérez</strong> (<span class="font-mono">gonzalezgpablo, pabloperez@uniovi.es</span>)
+      </div>
+      <div>
+        Centro de Inteligencia Artificial · Grado en Ciencia e Ingeniería de Datos (Gijón)
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // --- 1. Dataset definition (Real dose vs effect points) ---
+    const CLINICAL_DATA = [
+      { dose: 0.01, effect: 0 },
+      { dose: 0.10, effect: 0 },
+      { dose: 0.20, effect: 0 },
+      { dose: 0.40, effect: 1 },
+      { dose: 0.45, effect: 1 },
+      { dose: 0.50, effect: 1 },
+      { dose: 0.60, effect: 1 },
+      { dose: 0.80, effect: 0 },
+      { dose: 0.90, effect: 0 },
+      { dose: 1.00, effect: 0 }
+    ];
+
+    // --- 2. Network Parameters State ---
+    const DEFAULT_PARAMS = {
+      w11: -13.80,
+      b1: 6.36,
+      w12: -5.72,
+      b2: 2.15,
+      wo1: -1.91,
+      wo2: 5.49,
+      by: -0.25
+    };
+
+    let params = { ...DEFAULT_PARAMS };
+    let currentProbeX = 0.50;
+    let currentStep = 1;
+    let activeMainTab = 'guided';
+    let scanInterval = null;
+    let scanDirection = 1;
+
+    // --- 3. Mathematical Functions ---
+    function softplus(z) {
+      if (z > 30) return z;
+      if (z < -30) return 0;
+      return Math.log(1 + Math.exp(z));
+    }
+
+    function forwardPass(x, p = params) {
+      const z1 = p.w11 * x + p.b1;
+      const h1 = softplus(z1);
+
+      const z2 = p.w12 * x + p.b2;
+      const h2 = softplus(z2);
+
+      const weightedH1 = p.wo1 * h1;
+      const weightedH2 = p.wo2 * h2;
+      const yNoBias = weightedH1 + weightedH2;
+      const y = yNoBias + p.by;
+
+      return { x, z1, h1, z2, h2, weightedH1, weightedH2, yNoBias, y };
+    }
+
+    function computeMSE(p = params) {
+      let sumSq = 0;
+      for (let item of CLINICAL_DATA) {
+        const pred = forwardPass(item.dose, p).y;
+        const err = pred - item.effect;
+        sumSq += err * err;
+      }
+      return sumSq / CLINICAL_DATA.length;
+    }
+
+    // --- 4. Stepper Explanations Content ---
+    const STEP_CONTENT = {
+      1: {
+        chartTitle: "Datos Reales: Dosis vs Efecto Clínico",
+        subtitle: "10 Pacientes con respuesta 0 (inactivo) o 1 (curado)",
+        html: `
+          <div class="space-y-3">
+            <h3 class="text-base font-bold text-slate-900">¿Por qué necesitamos una red neuronal?</h3>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              Observa los datos clínicos: los pacientes tratados con dosis muy bajas ($< 0.3$) o muy altas ($> 0.7$) tienen efecto $0$. Sólo la ventana intermedia $[0.4, 0.6]$ cura la enfermedad ($1$).
+            </p>
+            <div class="p-3 bg-brand-50 border border-brand-200 rounded-xl text-xs text-brand-900 space-y-1">
+              <span class="font-bold block">Conclusión inmediata:</span>
+              Una simple regresión lineal $y = w \\cdot x + b$ es totalmente incapaz de ajustar este comportamiento, pues una recta solo puede crecer o decrecer constantemente. Requerimos un <strong>modelo no lineal</strong>.
+            </div>
+            <p class="text-xs text-slate-500">
+              Avanza al siguiente paso para descubrir la función de activación utilizada para quebrar la linealidad.
+            </p>
+          </div>
+        `
+      },
+      2: {
+        chartTitle: "Función Softplus: f(x) = log(e^x + 1)",
+        subtitle: "Aproximación suave y diferenciable de la ReLU en [-10, 10]",
+        html: `
+          <div class="space-y-3">
+            <h3 class="text-base font-bold text-slate-900">La función no lineal: Softplus</h3>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              Para dotar de no linealidad a la red, aplicamos la función de activación <strong>softplus</strong> en la salida de cada neurona oculta:
+            </p>
+            <div class="py-2.5 text-center bg-slate-50 rounded-xl border border-slate-200 font-mono text-sm">
+              $$softplus(x) = \\log(e^x + 1)$$
+            </div>
+            <ul class="text-xs text-slate-600 space-y-1.5 list-disc pl-5">
+              <li>Para $x \\ll 0$, $e^x \\approx 0 \\implies softplus(x) \\to 0$.</li>
+              <li>Para $x \\gg 0$, $\\log(e^x + 1) \\approx \\log(e^x) = x$ (comportamiento asintótico idéntico a ReLU).</li>
+              <li>A diferencia de ReLU ($\max(0,x)$), Softplus es <strong>completamente derivable en $x=0$</strong>, facilitando el cálculo analítico de gradientes.</li>
+            </ul>
+          </div>
+        `
+      },
+      3: {
+        chartTitle: "Activación de la neurona h₁(x)",
+        subtitle: "Rampa descendente con corte alrededor de x ≈ 0.46",
+        html: `
+          <div class="space-y-3">
+            <h3 class="text-base font-bold text-slate-900">Neurona Oculta 1 ($h_1$)</h3>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              La combinación afín de entrada calculada por esta neurona es $z_1 = -13.8 \\cdot x + 6.36$. Al aplicar Softplus:
+            </p>
+            <div class="py-2.5 text-center bg-indigo-50 rounded-xl border border-indigo-200 font-mono text-sm text-indigo-950">
+              $$h_1 = \\log(e^{-13.8x + 6.36} + 1)$$
+            </div>
+            <p class="text-xs text-slate-600">
+              Fíjate en el punto de inflexión donde el argumento se hace cero:
+              $$-13.8x + 6.36 = 0 \\iff x \\approx \\frac{6.36}{13.8} \\approx 0.46$$
+            </p>
+            <p class="text-xs text-slate-600">
+              Para dosis $x < 0.46$, $h_1$ es positivo y decrece linealmente. Para dosis mayores, la neurona queda completamente apagada ($\approx 0$).
+            </p>
+          </div>
+        `
+      },
+      4: {
+        chartTitle: "Comparación entre las neuronas h₁(x) y h₂(x)",
+        subtitle: "Dos rampas con distinta pendiente y traslación",
+        html: `
+          <div class="space-y-3">
+            <h3 class="text-base font-bold text-slate-900">Neurona Oculta 2 ($h_2$)</h3>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              La segunda neurona oculta recibe un peso de menor magnitud y otro sesgo:
+            </p>
+            <div class="py-2.5 text-center bg-teal-50 rounded-xl border border-teal-200 font-mono text-sm text-teal-950">
+              $$h_2 = \\log(e^{-5.72x + 2.15} + 1)$$
+            </div>
+            <p class="text-xs text-slate-600">
+              El cambio de régimen de $h_2$ ocurre en:
+              $$-5.72x + 2.15 = 0 \\iff x \\approx \\frac{2.15}{5.72} \\approx 0.375$$
+            </p>
+            <div class="p-3 bg-slate-100 rounded-lg text-xs text-slate-700">
+              <strong>El secreto del modelo:</strong> Ambas neuronas por separado son funciones monotónicas descendentes. Sin embargo, al tener pendientes y umbrales distintos, si las restamos o combinamos con signos contrarios... ¡obtenemos una campana!
+            </div>
+          </div>
+        `
+      },
+      5: {
+        chartTitle: "Ajuste Final: y = -1.91 h₁ + 5.49 h₂ - 0.25",
+        subtitle: "La combinación lineal forma la campana exacta que reproduce los datos",
+        html: `
+          <div class="space-y-3">
+            <h3 class="text-base font-bold text-slate-900">Salida de la Red ($y$)</h3>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              La neurona de salida combina linealmente las dos activaciones y aplica un sesgo final:
+            </p>
+            <div class="py-2.5 text-center bg-rose-50 rounded-xl border border-rose-200 font-mono text-sm text-rose-950">
+              $$y = -1.91 h_1 + 5.49 h_2 - 0.25$$
+            </div>
+            <p class="text-xs text-slate-600">
+              Como $w_{out,1} = -1.91$ es <strong>negativo</strong> y $w_{out,2} = +5.49$ es <strong>positivo</strong>, la resta ponderada genera un pico que se eleva exactamente en $[0.4, 0.6]$.
+            </p>
+            <p class="text-xs text-slate-600">
+              El sesgo final $b_{out} = -0.25$ traslada verticalmente la curva hacia abajo para que el valor basal en los extremos vuelva a ser $0$.
+            </p>
+          </div>
+        `
+      }
+    };
+
+    // --- 5. Step Navigation & Rendering ---
+    function setGuidedStep(stepNum) {
+      currentStep = stepNum;
+      document.getElementById('stepCounterText').innerText = stepNum;
+
+      for (let i = 1; i <= 5; i++) {
+        const tab = document.getElementById(`stepTab${i}`);
+        if (i === stepNum) {
+          tab.className = "step-tab flex-1 min-w-[130px] text-left p-3 rounded-xl border-2 border-brand-500 bg-brand-50 transition-all";
+          tab.querySelector('span:first-child').className = "block text-xs font-bold uppercase tracking-wider text-brand-600";
+        } else {
+          tab.className = "step-tab flex-1 min-w-[130px] text-left p-3 rounded-xl border-2 border-transparent bg-slate-50 hover:bg-slate-100 transition-all";
+          tab.querySelector('span:first-child').className = "block text-xs font-bold uppercase tracking-wider text-slate-400";
+        }
+      }
+
+      document.getElementById('btnPrevStep').disabled = (stepNum === 1);
+      document.getElementById('btnNextStep').innerText = (stepNum === 5) ? 'Ir al Laboratorio ⚡' : 'Siguiente →';
+
+      const content = STEP_CONTENT[stepNum];
+      document.getElementById('stepExplanatoryContent').innerHTML = content.html;
+      document.getElementById('stepChartTitle').innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-brand-500"></span> ${content.chartTitle}`;
+      document.getElementById('stepChartSubtitle').innerText = content.subtitle;
+
+      renderMathInDocument();
+      renderGuidedPlot();
+    }
+
+    function navigateStep(delta) {
+      const target = currentStep + delta;
+      if (target >= 1 && target <= 5) {
+        setGuidedStep(target);
+      } else if (target > 5) {
+        switchMainTab('lab');
+      }
+    }
+
+    // --- 6. Plotting in Guided Mode (Clean curves without probe distractions) ---
+    function renderGuidedPlot() {
+      const container = document.getElementById('guidedPlot');
+      if (!container) return;
+
+      const traces = [];
+      const xs = [];
+      const N = 200;
+
+      if (currentStep === 2) {
+        for (let i = 0; i <= N; i++) xs.push(-10 + (20 * i) / N);
+      } else {
+        for (let i = 0; i <= N; i++) xs.push(i / N);
+      }
+
+      const layout = {
+        margin: { t: 25, r: 25, b: 40, l: 45 },
+        autosize: true,
+        hovermode: 'closest',
+        font: { family: 'Inter, sans-serif' },
+        showlegend: true,
+        legend: { orientation: 'h', y: -0.22, x: 0 },
+        paper_bgcolor: 'transparent',
+        plot_bgcolor: '#f8fafc',
+        xaxis: {
+          title: currentStep === 2 ? 'x' : 'Dosis (x)',
+          gridcolor: '#e2e8f0',
+          zerolinecolor: '#94a3b8'
+        },
+        yaxis: {
+          title: currentStep === 2 ? 'softplus(x)' : 'Valor',
+          gridcolor: '#e2e8f0',
+          zerolinecolor: '#94a3b8'
+        }
+      };
+
+      if (currentStep === 1) {
+        traces.push({
+          x: CLINICAL_DATA.map(d => d.dose),
+          y: CLINICAL_DATA.map(d => d.effect),
+          mode: 'markers',
+          name: 'Pacientes Clínicos (Efecto)',
+          marker: { size: 10, color: '#f59e0b', line: { color: '#b45309', width: 2 } }
+        });
+      } else if (currentStep === 2) {
+        const ySoftplus = xs.map(x => softplus(x));
+        const yRelu = xs.map(x => Math.max(0, x));
+
+        traces.push({
+          x: xs,
+          y: ySoftplus,
+          mode: 'lines',
+          name: 'Softplus: log(1+e^x)',
+          line: { color: '#0284c7', width: 3.5 }
+        });
+        traces.push({
+          x: xs,
+          y: yRelu,
+          mode: 'lines',
+          name: 'ReLU: max(0, x)',
+          line: { color: '#94a3b8', width: 2, dash: 'dash' }
+        });
+      } else if (currentStep === 3) {
+        const yh1 = xs.map(x => softplus(params.w11 * x + params.b1));
+        traces.push({
+          x: xs,
+          y: yh1,
+          mode: 'lines',
+          name: 'h₁(x) = log(e^{-13.8x+6.36}+1)',
+          line: { color: '#4f46e5', width: 3.5 }
+        });
+      } else if (currentStep === 4) {
+        const yh1 = xs.map(x => softplus(params.w11 * x + params.b1));
+        const yh2 = xs.map(x => softplus(params.w12 * x + params.b2));
+
+        traces.push({
+          x: xs,
+          y: yh1,
+          mode: 'lines',
+          name: 'h₁(x) [w₁₁=-13.8, b₁=6.36]',
+          line: { color: '#4f46e5', width: 3 }
+        });
+        traces.push({
+          x: xs,
+          y: yh2,
+          mode: 'lines',
+          name: 'h₂(x) [w₁₂=-5.72, b₂=2.15]',
+          line: { color: '#0d9488', width: 3 }
+        });
+      } else if (currentStep === 5) {
+        const yNoBias = xs.map(x => forwardPass(x).yNoBias);
+        const yWithBias = xs.map(x => forwardPass(x).y);
+
+        traces.push({
+          x: CLINICAL_DATA.map(d => d.dose),
+          y: CLINICAL_DATA.map(d => d.effect),
+          mode: 'markers',
+          name: 'Datos Reales',
+          marker: { size: 10, color: '#f59e0b', line: { color: '#b45309', width: 2 } }
+        });
+
+        traces.push({
+          x: xs,
+          y: yNoBias,
+          mode: 'lines',
+          name: 'Sin sesgo (-1.91h₁ + 5.49h₂)',
+          line: { color: '#a855f7', width: 2.5, dash: 'dot' }
+        });
+
+        traces.push({
+          x: xs,
+          y: yWithBias,
+          mode: 'lines',
+          name: 'Salida Final ŷ(x)',
+          line: { color: '#0284c7', width: 4 }
+        });
+      }
+
+      Plotly.react(container, traces, layout, { responsive: true, displayModeBar: false });
+    }
+
+    // --- 7. Plotting in Lab Mode (Playground with probe point) ---
+    function renderLabPlot() {
+      const container = document.getElementById('labPlot');
+      if (!container) return;
+
+      const N = 250;
+      const xs = [];
+      for (let i = 0; i <= N; i++) xs.push(i / N);
+
+      const yPred = [];
+      const yNoBias = [];
+      const yh1 = [];
+      const yh2 = [];
+      const ywh1 = [];
+      const ywh2 = [];
+
+      for (let x of xs) {
+        const fp = forwardPass(x, params);
+        yPred.push(fp.y);
+        yNoBias.push(fp.yNoBias);
+        yh1.push(fp.h1);
+        yh2.push(fp.h2);
+        ywh1.push(fp.weightedH1);
+        ywh2.push(fp.weightedH2);
+      }
+
+      const showData = document.getElementById('chk_data')?.checked ?? true;
+      const showPred = document.getElementById('chk_pred')?.checked ?? true;
+      const showNoBias = document.getElementById('chk_nobias')?.checked ?? true;
+      const showH1 = document.getElementById('chk_h1')?.checked ?? false;
+      const showH2 = document.getElementById('chk_h2')?.checked ?? false;
+      const showWH1 = document.getElementById('chk_wh1')?.checked ?? false;
+      const showWH2 = document.getElementById('chk_wh2')?.checked ?? false;
+
+      const traces = [
+        // 0: Clinical data
+        {
+          x: CLINICAL_DATA.map(d => d.dose),
+          y: CLINICAL_DATA.map(d => d.effect),
+          mode: 'markers',
+          name: 'Datos Reales',
+          visible: showData ? true : false,
+          marker: { size: 10, color: '#f59e0b', line: { color: '#b45309', width: 2 } }
+        },
+        // 1: Final Prediction
+        {
+          x: xs,
+          y: yPred,
+          mode: 'lines',
+          name: 'Salida ŷ(x)',
+          visible: showPred ? true : false,
+          line: { color: '#0284c7', width: 4 }
+        },
+        // 2: Without Bias
+        {
+          x: xs,
+          y: yNoBias,
+          mode: 'lines',
+          name: 'Sin Bias',
+          visible: showNoBias ? true : false,
+          line: { color: '#9333ea', width: 2, dash: 'dash' }
+        },
+        // 3: h1
+        {
+          x: xs,
+          y: yh1,
+          mode: 'lines',
+          name: 'h₁(x)',
+          visible: showH1 ? true : false,
+          line: { color: '#4f46e5', width: 2 }
+        },
+        // 4: h2
+        {
+          x: xs,
+          y: yh2,
+          mode: 'lines',
+          name: 'h₂(x)',
+          visible: showH2 ? true : false,
+          line: { color: '#0d9488', width: 2 }
+        },
+        // 5: w_o1 * h1
+        {
+          x: xs,
+          y: ywh1,
+          mode: 'lines',
+          name: 'wₒ₁·h₁',
+          visible: showWH1 ? true : false,
+          line: { color: '#38bdf8', width: 2, dash: 'dot' }
+        },
+        // 6: w_o2 * h2
+        {
+          x: xs,
+          y: ywh2,
+          mode: 'lines',
+          name: 'wₒ₂·h₂',
+          visible: showWH2 ? true : false,
+          line: { color: '#34d399', width: 2, dash: 'dot' }
+        },
+        // 7: Live Probe Indicator
+        {
+          x: [currentProbeX],
+          y: [forwardPass(currentProbeX, params).y],
+          mode: 'markers',
+          name: `Sonda x=${currentProbeX.toFixed(2)}`,
+          marker: { size: 12, color: '#e11d48', symbol: 'diamond' },
+          showlegend: false
+        }
+      ];
+
+      const layout = {
+        margin: { t: 25, r: 25, b: 45, l: 45 },
+        autosize: true,
+        hovermode: 'x unified',
+        font: { family: 'Inter, sans-serif' },
+        showlegend: true,
+        legend: { orientation: 'h', y: -0.22, x: 0 },
+        paper_bgcolor: 'transparent',
+        plot_bgcolor: '#f8fafc',
+        xaxis: {
+          title: 'Dosis (x)',
+          range: [-0.02, 1.05],
+          gridcolor: '#e2e8f0',
+          zerolinecolor: '#94a3b8'
+        },
+        yaxis: {
+          title: 'Efecto / Activación',
+          range: [-1.2, 1.8],
+          gridcolor: '#e2e8f0',
+          zerolinecolor: '#94a3b8'
+        }
+      };
+
+      Plotly.react(container, traces, layout, { responsive: true, displayModeBar: false });
+
+      const mse = computeMSE(params);
+      document.getElementById('mseDisplay').innerText = mse.toFixed(4);
+    }
+
+    function toggleLabCurve() {
+      renderLabPlot();
+    }
+
+    // --- 8. Synchronizing SVG and Live Inference Probe ---
+    function onProbeInput(val) {
+      currentProbeX = parseFloat(val);
+      document.getElementById('probeValDisplay').innerText = currentProbeX.toFixed(3);
+      updateInferenceUI();
+    }
+
+    function toggleAutoScan() {
+      const btn = document.getElementById('btnAutoScan');
+      const icon = document.getElementById('playIcon');
+      const txt = document.getElementById('playText');
+
+      if (scanInterval) {
+        clearInterval(scanInterval);
+        scanInterval = null;
+        btn.classList.remove('bg-brand-50', 'border-brand-300');
+        icon.classList.remove('text-rose-600');
+        icon.classList.add('text-brand-600');
+        icon.innerHTML = '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>';
+        txt.innerText = 'Barrido';
+      } else {
+        btn.classList.add('bg-brand-50', 'border-brand-300');
+        icon.classList.remove('text-brand-600');
+        icon.classList.add('text-rose-600');
+        icon.innerHTML = '<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>';
+        txt.innerText = 'Pausar';
+
+        scanInterval = setInterval(() => {
+          let nextX = currentProbeX + (0.01 * scanDirection);
+          if (nextX >= 1.0) {
+            nextX = 1.0;
+            scanDirection = -1;
+          } else if (nextX <= 0.0) {
+            nextX = 0.0;
+            scanDirection = 1;
+          }
+          document.getElementById('globalProbeSlider').value = nextX.toFixed(3);
+          onProbeInput(nextX);
+        }, 50);
+      }
+    }
+
+    function updateInferenceUI() {
+      const fp = forwardPass(currentProbeX, params);
+
+      document.getElementById('probeH1Val').innerText = fp.h1.toFixed(3);
+      document.getElementById('probeH2Val').innerText = fp.h2.toFixed(3);
+      document.getElementById('probeYVal').innerText = fp.y.toFixed(3);
+
+      const svgIn = document.getElementById('svg_in_val');
+      if (svgIn) svgIn.textContent = currentProbeX.toFixed(2);
+      
+      const svgH1 = document.getElementById('svg_h1_val');
+      if (svgH1) svgH1.textContent = fp.h1.toFixed(2);
+
+      const svgH2 = document.getElementById('svg_h2_val');
+      if (svgH2) svgH2.textContent = fp.h2.toFixed(2);
+
+      const svgY = document.getElementById('svg_y_val');
+      if (svgY) svgY.textContent = fp.y.toFixed(2);
+
+      if (activeMainTab === 'lab') {
+        renderLabPlot();
+      }
+    }
+
+    // --- 9. Parameter Modifiers in Lab Mode ---
+    function updateParam(key, val) {
+      params[key] = parseFloat(val);
+      
+      const lbl = document.getElementById(`lbl_${key}`);
+      if (lbl) lbl.innerText = (params[key] >= 0 ? '+' : '') + params[key].toFixed(2);
+
+      if (key === 'w11') document.getElementById('svg_w11_txt').textContent = `w₁₁=${params.w11.toFixed(1)}`;
+      if (key === 'b1') document.getElementById('svg_b1_txt').textContent = `b₁=${params.b1.toFixed(1)}`;
+      if (key === 'w12') document.getElementById('svg_w12_txt').textContent = `w₁₂=${params.w12.toFixed(1)}`;
+      if (key === 'b2') document.getElementById('svg_b2_txt').textContent = `b₂=${params.b2.toFixed(1)}`;
+      if (key === 'wo1') document.getElementById('svg_wo1_txt').textContent = `wₒ₁=${params.wo1.toFixed(1)}`;
+      if (key === 'wo2') document.getElementById('svg_wo2_txt').textContent = `wₒ₂=${params.wo2.toFixed(1)}`;
+      if (key === 'by') document.getElementById('svg_bout_txt').textContent = `b_y=${params.by.toFixed(2)}`;
+
+      updateInferenceUI();
+    }
+
+    function resetDefaultWeights() {
+      params = { ...DEFAULT_PARAMS };
+      
+      const map = {
+        sl_w11: params.w11, lbl_w11: params.w11,
+        sl_b1: params.b1, lbl_b1: params.b1,
+        sl_w12: params.w12, lbl_w12: params.w12,
+        sl_b2: params.b2, lbl_b2: params.b2,
+        sl_wo1: params.wo1, lbl_wo1: params.wo1,
+        sl_wo2: params.wo2, lbl_wo2: params.wo2,
+        sl_by: params.by, lbl_by: params.by
+      };
+
+      for (let id in map) {
+        const el = document.getElementById(id);
+        if (el) {
+          if (el.tagName === 'INPUT') el.value = map[id];
+          else el.innerText = map[id].toFixed(2);
+        }
+      }
+
+      document.getElementById('svg_w11_txt').textContent = `w₁₁=${params.w11.toFixed(1)}`;
+      document.getElementById('svg_b1_txt').textContent = `b₁=${params.b1.toFixed(1)}`;
+      document.getElementById('svg_w12_txt').textContent = `w₁₂=${params.w12.toFixed(1)}`;
+      document.getElementById('svg_b2_txt').textContent = `b₂=${params.b2.toFixed(1)}`;
+      document.getElementById('svg_wo1_txt').textContent = `wₒ₁=${params.wo1.toFixed(1)}`;
+      document.getElementById('svg_wo2_txt').textContent = `wₒ₂=${params.wo2.toFixed(1)}`;
+      document.getElementById('svg_bout_txt').textContent = `b_y=${params.by.toFixed(2)}`;
+
+      updateInferenceUI();
+    }
+
+    // --- 10. Tab Switching ---
+    function switchMainTab(tab) {
+      activeMainTab = tab;
+      const secGuided = document.getElementById('sectionGuided');
+      const secLab = document.getElementById('sectionLab');
+      const btnGuided = document.getElementById('tabBtnGuided');
+      const btnLab = document.getElementById('tabBtnLab');
+
+      if (tab === 'guided') {
+        if (scanInterval) toggleAutoScan(); // stop scan if running
+        secGuided.classList.remove('hidden');
+        secLab.classList.add('hidden');
+
+        btnGuided.className = "px-3.5 py-1.5 rounded-lg transition-all text-brand-700 bg-white shadow-sm font-semibold flex items-center gap-1.5";
+        btnLab.className = "px-3.5 py-1.5 rounded-lg transition-all text-slate-600 hover:text-slate-900 flex items-center gap-1.5";
+        
+        renderGuidedPlot();
+      } else {
+        secGuided.classList.add('hidden');
+        secLab.classList.remove('hidden');
+
+        btnLab.className = "px-3.5 py-1.5 rounded-lg transition-all text-brand-700 bg-white shadow-sm font-semibold flex items-center gap-1.5";
+        btnGuided.className = "px-3.5 py-1.5 rounded-lg transition-all text-slate-600 hover:text-slate-900 flex items-center gap-1.5";
+        
+        updateInferenceUI();
+        renderLabPlot();
+      }
+      renderMathInDocument();
+    }
+
+    function renderMathInDocument() {
+      if (window.renderMathInElement) {
+        window.renderMathInElement(document.body, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false }
+          ],
+          throwOnError: false
+        });
+      }
+    }
+
+    // --- Initialization on window load ---
+    window.addEventListener('load', () => {
+      setGuidedStep(1);
+      updateInferenceUI();
+      window.addEventListener('resize', () => {
+        if (activeMainTab === 'guided') renderGuidedPlot();
+        else renderLabPlot();
+      });
+    });
+  </script>
+</body>
+</html>
