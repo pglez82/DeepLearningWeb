@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulador de Optimizadores - Aprendizaje Profundo</title>
+  
+  <!-- Tailwind CSS para diseño moderno y responsive -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- KaTeX CSS y JS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <!-- KaTeX auto-render extension -->
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" 
+          onload="renderizarMatematicas();"></script>
+
+  <style>
+    .math-font { font-family: 'KaTeX_Math', 'Times New Roman', serif; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen p-4 md:p-8">
+
+  <header class="max-w-6xl mx-auto mb-8 text-center">
+    <span class="text-xs uppercase tracking-widest font-semibold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">
+      Aprendizaje Profundo · Universidad de Oviedo
+    </span>
+    <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mt-3">
+      Visualizador Didáctico de Optimizadores
+    </h1>
+    <p class="text-slate-600 mt-2 text-base md:text-lg">
+      Resolución interactiva paso a paso del ejercicio de optimización
+    </p>
+  </header>
+
+  <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Panel Izquierdo: Gráfico y Estado General -->
+    <div class="lg:col-span-7 space-y-6">
+      
+      <!-- Tarjeta del Gráfico -->
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-bold text-slate-800">
+            Superficie de Pérdida: <span id="math-header">$\mathcal{L}(w) = \frac{1}{2}(y - wx)^2$</span>
+          </h2>
+          <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">
+            Objetivo: $w^* = 4.0$
+          </span>
+        </div>
+        
+        <div class="relative w-full aspect-[16/10] bg-slate-900 rounded-xl overflow-hidden shadow-inner">
+          <canvas id="lossCanvas" class="w-full h-full"></canvas>
+        </div>
+
+        <!-- Leyenda de Optimizadores -->
+        <div class="flex flex-wrap gap-3 mt-4 pt-3 border-t border-slate-100 text-xs font-semibold">
+          <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-blue-500"></span> GD Estándar</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Momentum ($\gamma=0.9$)</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-500"></span> AdaGrad</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-purple-500"></span> RMSProp ($\beta=0.99$)</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-rose-500"></span> Adam ($\beta_1=0.9, \beta_2=0.999$)</span>
+        </div>
+      </div>
+
+      <!-- Controles de Simulación -->
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-2">
+          <button id="btnPrev" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg text-sm transition">
+            ← Paso anterior
+          </button>
+          <button id="btnNext" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg text-sm shadow transition">
+            Siguiente paso →
+          </button>
+          <button id="btnReset" class="px-3 py-2 text-slate-500 hover:text-slate-800 text-sm transition">
+            Reiniciar
+          </button>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <span class="text-sm font-semibold text-slate-600">Iteración actual:</span>
+          <span id="iterBadge" class="bg-indigo-100 text-indigo-800 font-bold px-3 py-1 rounded-lg text-sm">
+            $t = 0$
+          </span>
+        </div>
+      </div>
+
+      <!-- Tabla Comparativa de Pesos -->
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <h3 class="text-base font-bold text-slate-800 mb-3">Valores actuales del peso ($w_t$)</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="text-slate-400 border-b border-slate-100">
+                <th class="pb-2 font-medium">Optimizador</th>
+                <th class="pb-2 font-medium">Peso ($w_t$)</th>
+                <th class="pb-2 font-medium">Gradiente ($g_t$)</th>
+                <th class="pb-2 font-medium">Pérdida ($\mathcal{L}$)</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody" class="divide-y divide-slate-100 font-mono text-xs">
+              <!-- Se rellena dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel Derecho: Pizarra Matemática de la Iteración -->
+    <div class="lg:col-span-5 space-y-6">
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+          <h3 class="font-bold text-slate-800 text-base">Desglose Matemático Paso a Paso</h3>
+          <select id="optSelect" class="text-xs bg-slate-50 border border-slate-300 rounded-lg p-1.5 font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="gd">Descenso del Gradiente</option>
+            <option value="momentum">GD con Momento</option>
+            <option value="adagrad">AdaGrad</option>
+            <option value="rmsprop">RMSProp</option>
+            <option value="adam" selected>Adam</option>
+          </select>
+        </div>
+
+        <!-- Contenedor donde se inyectan las fórmulas KaTeX -->
+        <div id="mathBoard" class="space-y-4 text-sm leading-relaxed text-slate-700 min-h-[380px]">
+          <!-- Se actualizará con fórmulas dinámicamente -->
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // --- 1. FUNCIÓN DE RENDERIZADO KATEX ROBUSTA ---
+    function renderizarMatematicas(elemento = document.body) {
+      if (window.renderMathInElement) {
+        renderMathInElement(elemento, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false }
+          ],
+          throwOnError: false
+        });
+      }
+    }
+
+    // --- 2. MODELO Y ESTADO ---
+    const config = {
+      x: 1.0,
+      y: 4.0,
+      eta: 0.1,
+      gamma: 0.9,
+      beta_rmsprop: 0.99,
+      beta1: 0.9,
+      beta2: 0.999,
+      eps: 1e-8
+    };
+
+    let step = 0;
+    const history = [];
+
+    // Función de pérdida y gradiente
+    const lossFn = (w) => 0.5 * Math.pow(config.y - w * config.x, 2);
+    const gradFn = (w) => -(config.y - w * config.x) * config.x;
+
+    // Inicializar estado en t = 0
+    function initSimulation() {
+      history.length = 0;
+      history.push({
+        step: 0,
+        gd: { w: 2.0, g: gradFn(2.0), loss: lossFn(2.0), update: 0 },
+        momentum: { w: 2.0, g: gradFn(2.0), loss: lossFn(2.0), update: 0 },
+        adagrad: { w: 2.0, g: gradFn(2.0), loss: lossFn(2.0), G: 0, eta_prime: 0 },
+        rmsprop: { w: 2.0, g: gradFn(2.0), loss: lossFn(2.0), G: 0, eta_prime: 0 },
+        adam: { w: 2.0, g: gradFn(2.0), loss: lossFn(2.0), m: 0, v: 0, m_hat: 0, v_hat: 0 }
+      });
+      step = 0;
+    }
+
+    // Simular un paso hacia adelante
+    function computeNextStep() {
+      const prev = history[history.length - 1];
+      const t = prev.step + 1;
+
+      // --- GD ---
+      const gd_g = gradFn(prev.gd.w);
+      const gd_up = config.eta * gd_g;
+      const gd_w = prev.gd.w - gd_up;
+
+      // --- Momentum ---
+      const mom_g = gradFn(prev.momentum.w);
+      const mom_up = config.gamma * prev.momentum.update + config.eta * mom_g;
+      const mom_w = prev.momentum.w - mom_up;
+
+      // --- AdaGrad ---
+      const ada_g = gradFn(prev.adagrad.w);
+      const ada_G = prev.adagrad.G + Math.pow(ada_g, 2);
+      const ada_eta = config.eta / Math.sqrt(ada_G + config.eps);
+      const ada_w = prev.adagrad.w - ada_eta * ada_g;
+
+      // --- RMSProp ---
+      const rms_g = gradFn(prev.rmsprop.w);
+      const rms_G = config.beta_rmsprop * prev.rmsprop.G + (1 - config.beta_rmsprop) * Math.pow(rms_g, 2);
+      const rms_eta = config.eta / Math.sqrt(rms_G + config.eps);
+      const rms_w = prev.rmsprop.w - rms_eta * rms_g;
+
+      // --- Adam ---
+      const adam_g = gradFn(prev.adam.w);
+      const adam_m = config.beta1 * prev.adam.m + (1 - config.beta1) * adam_g;
+      const adam_v = config.beta2 * prev.adam.v + (1 - config.beta2) * Math.pow(adam_g, 2);
+      const adam_m_hat = adam_m / (1 - Math.pow(config.beta1, t));
+      const adam_v_hat = adam_v / (1 - Math.pow(config.beta2, t));
+      const adam_w = prev.adam.w - config.eta * (adam_m_hat / (Math.sqrt(adam_v_hat) + config.eps));
+
+      history.push({
+        step: t,
+        gd: { w: gd_w, g: gd_g, loss: lossFn(gd_w), update: gd_up },
+        momentum: { w: mom_w, g: mom_g, loss: lossFn(mom_w), update: mom_up },
+        adagrad: { w: ada_w, g: ada_g, loss: lossFn(ada_w), G: ada_G, eta_prime: ada_eta },
+        rmsprop: { w: rms_w, g: rms_g, loss: lossFn(rms_w), G: rms_G, eta_prime: rms_eta },
+        adam: { w: adam_w, g: adam_g, loss: lossFn(adam_w), m: adam_m, v: adam_v, m_hat: adam_m_hat, v_hat: adam_v_hat }
+      });
+    }
+
+    // --- 3. ACTUALIZACIÓN VISUAL Y DE FÓRMULAS ---
+    function updateUI() {
+      // Badge de iteración
+      const iterElem = document.getElementById("iterBadge");
+      iterElem.innerHTML = `$t = ${step}$`;
+
+      // Tabla comparativa
+      const current = history[step];
+      const optList = [
+        { name: "Descenso Gradiente", key: "gd", color: "text-blue-600" },
+        { name: "Momentum", key: "momentum", color: "text-emerald-600" },
+        { name: "AdaGrad", key: "adagrad", color: "text-amber-600" },
+        { name: "RMSProp", key: "rmsprop", color: "text-purple-600" },
+        { name: "Adam", key: "adam", color: "text-rose-600" }
+      ];
+
+      const tbody = document.getElementById("tableBody");
+      tbody.innerHTML = optList.map(opt => `
+        <tr>
+          <td class="py-2.5 font-sans font-semibold ${opt.color}">${opt.name}</td>
+          <td class="py-2.5">${current[opt.key].w.toFixed(4)}</td>
+          <td class="py-2.5">${current[opt.key].g.toFixed(4)}</td>
+          <td class="py-2.5">${current[opt.key].loss.toFixed(4)}</td>
+        </tr>
+      `).join("");
+
+      // Pizarra matemática del optimizador seleccionado
+      renderPizarraMatematica();
+
+      // Redibujar Canvas
+      drawCanvas();
+
+      // Renderizar cualquier fórmula matemática nueva
+      renderizarMatematicas();
+    }
+
+    function renderPizarraMatematica() {
+      const selected = document.getElementById("optSelect").value;
+      const board = document.getElementById("mathBoard");
+      const cur = history[step];
+
+      if (step === 0) {
+        board.innerHTML = `
+          <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+            <h4 class="font-bold text-slate-800 mb-2">Estado Inicial ($t=0$)</h4>
+            <p>Valor inicial: $w_0 = 2.0$, Entrada: $x = 1.0$, Etiqueta: $y = 4.0$</p>
+            <p class="mt-2">Predicción: $\\hat{y} = w \\cdot x = 2.0 \\cdot 1.0 = 2.0$</p>
+            <p class="mt-1">Pérdida inicial: $$\\mathcal{L} = \\frac{1}{2}(y - \\hat{y})^2 = \\frac{1}{2}(4 - 2)^2 = 2.0$$</p>
+            <p class="mt-1">Gradiente inicial: $$g_0 = \\frac{\\partial\\mathcal{L}}{\\partial w} = -(y - wx) = -(4 - 2) = -2.0$$</p>
+            <p class="text-xs text-slate-500 mt-3">Haz clic en <b>"Siguiente paso"</b> para ver la primera actualización del peso.</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Detalle para t >= 1
+      const prev = history[step - 1];
+      let html = `
+        <div class="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-1">
+          Paso $t = ${step}$ (${selected.toUpperCase()})
+        </div>
+      `;
+
+      if (selected === "gd") {
+        html += `
+          <div class="space-y-3">
+            <p>1. Gradiente: $$g_t = -(y - w_t) = -(4 - ${prev.gd.w.toFixed(2)}) = ${cur.gd.g.toFixed(2)}$$</p>
+            <p>2. Actualización ($update_t$): $$update_t = \\eta \\cdot g_t = 0.1 \\cdot (${cur.gd.g.toFixed(2)}) = ${cur.gd.update.toFixed(3)}$$</p>
+            <p>3. Nuevo peso: $$w_{t+1} = w_t - update_t = ${prev.gd.w.toFixed(2)} - (${cur.gd.update.toFixed(3)}) = \\mathbf{${cur.gd.w.toFixed(4)}}$$</p>
+          </div>
+        `;
+      } else if (selected === "momentum") {
+        html += `
+          <div class="space-y-3">
+            <p>1. Gradiente: $$g_t = -(4 - ${prev.momentum.w.toFixed(2)}) = ${cur.momentum.g.toFixed(2)}$$</p>
+            <p>2. Momento ($update_t$): $$update_t = \\gamma \\cdot update_{t-1} + \\eta \\cdot g_t$$
+               $$update_t = 0.9 \\cdot (${prev.momentum.update.toFixed(2)}) + 0.1 \\cdot (${cur.momentum.g.toFixed(2)}) = ${cur.momentum.update.toFixed(3)}$$</p>
+            <p>3. Nuevo peso: $$w_{t+1} = w_t - update_t = ${prev.momentum.w.toFixed(2)} - (${cur.momentum.update.toFixed(3)}) = \\mathbf{${cur.momentum.w.toFixed(4)}}$$</p>
+          </div>
+        `;
+      } else if (selected === "adagrad") {
+        html += `
+          <div class="space-y-3">
+            <p>1. Gradiente: $$g_t = ${cur.adagrad.g.toFixed(2)}$$</p>
+            <p>2. Acumulación $G_t$: $$G_t = G_{t-1} + g_t^2 = ${prev.adagrad.G.toFixed(2)} + (${cur.adagrad.g.toFixed(2)})^2 = ${cur.adagrad.G.toFixed(2)}$$</p>
+            <p>3. Learning rate adaptativo: $$\\eta' = \\frac{\\eta}{\\sqrt{G_t + \\epsilon}} = \\frac{0.1}{\\sqrt{${cur.adagrad.G.toFixed(2)}}} = ${cur.adagrad.eta_prime.toFixed(4)}$$</p>
+            <p>4. Nuevo peso: $$w_{t+1} = w_t - \\eta' g_t = ${prev.adagrad.w.toFixed(2)} - (${cur.adagrad.eta_prime.toFixed(4)})(${cur.adagrad.g.toFixed(2)}) = \\mathbf{${cur.adagrad.w.toFixed(4)}}$$</p>
+          </div>
+        `;
+      } else if (selected === "rmsprop") {
+        html += `
+          <div class="space-y-3">
+            <p>1. Gradiente: $$g_t = ${cur.rmsprop.g.toFixed(2)}$$</p>
+            <p>2. Media móvil $G_t$: $$G_t = \\beta G_{t-1} + (1-\\beta)g_t^2$$
+               $$G_t = 0.99 \\cdot ${prev.rmsprop.G.toFixed(3)} + 0.01 \\cdot (${cur.rmsprop.g.toFixed(2)})^2 = ${cur.rmsprop.G.toFixed(4)}$$</p>
+            <p>3. Learning rate adaptativo: $$\\eta' = \\frac{0.1}{\\sqrt{${cur.rmsprop.G.toFixed(4)}}} = ${cur.rmsprop.eta_prime.toFixed(3)}$$</p>
+            <p>4. Nuevo peso: $$w_{t+1} = w_t - \\eta' g_t = \\mathbf{${cur.rmsprop.w.toFixed(4)}}$$</p>
+          </div>
+        `;
+      } else if (selected === "adam") {
+        html += `
+          <div class="space-y-2 text-xs md:text-sm">
+            <p>1. Momentos $m_t$ y $v_t$:
+              $$m_t = 0.9 \\cdot (${prev.adam.m.toFixed(2)}) + 0.1 \\cdot (${cur.adam.g.toFixed(2)}) = ${cur.adam.m.toFixed(3)}$$
+              $$v_t = 0.999 \\cdot (${prev.adam.v.toFixed(3)}) + 0.001 \\cdot (${cur.adam.g.toFixed(2)})^2 = ${cur.adam.v.toFixed(4)}$$
+            </p>
+            <p>2. Corrección de sesgo ($t=${step}$):
+              $$\\hat{m}_t = \\frac{${cur.adam.m.toFixed(3)}}{1 - 0.9^{${step}}} = ${cur.adam.m_hat.toFixed(2)}$$
+              $$\\hat{v}_t = \\frac{${cur.adam.v.toFixed(4)}}{1 - 0.999^{${step}}} = ${cur.adam.v_hat.toFixed(2)}$$
+            </p>
+            <p>3. Actualización final:
+              $$w_{t+1} = w_t - \\eta \\frac{\\hat{m}_t}{\\sqrt{\\hat{v}_t} + \\epsilon} = \\mathbf{${cur.adam.w.toFixed(4)}}$$
+            </p>
+          </div>
+        `;
+      }
+
+      board.innerHTML = html;
+    }
+
+    // --- 4. RENDERIZADO DEL GRÁFICO (CANVAS) ---
+    function drawCanvas() {
+      const canvas = document.getElementById("lossCanvas");
+      const ctx = canvas.getContext("2d");
+      
+      const width = canvas.parentElement.clientWidth;
+      const height = canvas.parentElement.clientHeight;
+      canvas.width = width * window.devicePixelRatio;
+      canvas.height = height * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+      // Rangos
+      const minW = 1.0, maxW = 4.5;
+      const minL = 0.0, maxL = 2.5;
+
+      const toX = (w) => ((w - minW) / (maxW - minW)) * (width - 60) + 40;
+      const toY = (loss) => height - 30 - ((loss - minL) / (maxL - minL)) * (height - 50);
+
+      // Limpiar fondo
+      ctx.fillStyle = "#0f172a";
+      ctx.fillRect(0, 0, width, height);
+
+      // Ejes y rejilla
+      ctx.strokeStyle = "#334155";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let w = 1.0; w <= 4.5; w += 0.5) {
+        const x = toX(w);
+        ctx.moveTo(x, 10);
+        ctx.lineTo(x, height - 30);
+      }
+      for (let l = 0; l <= 2.5; l += 0.5) {
+        const y = toY(l);
+        ctx.moveTo(40, y);
+        ctx.lineTo(width - 20, y);
+      }
+      ctx.stroke();
+
+      // Dibujar parábola teórica L(w) = 0.5 * (4 - w)^2
+      ctx.strokeStyle = "#94a3b8";
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      for (let px = 0; px <= width; px += 2) {
+        const wVal = minW + (px / width) * (maxW - minW);
+        const lVal = lossFn(wVal);
+        const x = toX(wVal);
+        const y = toY(lVal);
+        if (px === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Dibujar trayectorias de optimizadores
+      const colors = {
+        gd: "#3b82f6",
+        momentum: "#10b981",
+        adagrad: "#f59e0b",
+        rmsprop: "#a855f7",
+        adam: "#f43f5e"
+      };
+
+      Object.keys(colors).forEach(optKey => {
+        ctx.strokeStyle = colors[optKey];
+        ctx.fillStyle = colors[optKey];
+        ctx.lineWidth = 2;
+
+        ctx.beginPath();
+        for (let i = 0; i <= step; i++) {
+          const pt = history[i][optKey];
+          const x = toX(pt.w);
+          const y = toY(lossFn(pt.w));
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        // Punto actual
+        const curPt = history[step][optKey];
+        const curX = toX(curPt.w);
+        const curY = toY(lossFn(curPt.w));
+        ctx.beginPath();
+        ctx.arc(curX, curY, 5, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    // --- 5. EVENT LISTENERS ---
+    document.getElementById("btnNext").addEventListener("click", () => {
+      step++;
+      if (step >= history.length) {
+        computeNextStep();
+      }
+      updateUI();
+    });
+
+    document.getElementById("btnPrev").addEventListener("click", () => {
+      if (step > 0) {
+        step--;
+        updateUI();
+      }
+    });
+
+    document.getElementById("btnReset").addEventListener("click", () => {
+      initSimulation();
+      updateUI();
+    });
+
+    document.getElementById("optSelect").addEventListener("change", () => {
+      renderPizarraMatematica();
+      renderizarMatematicas();
+    });
+
+    window.addEventListener("resize", drawCanvas);
+
+    // Inicialización al cargar la ventana
+    window.addEventListener("DOMContentLoaded", () => {
+      initSimulation();
+      updateUI();
+      // Render inicial para títulos estáticos
+      renderizarMatematicas();
+    });
+  </script>
+</body>
+</html>
